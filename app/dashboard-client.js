@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useTransition } from "react";
 
@@ -36,6 +36,124 @@ const SECTION_META = {
     copy: "Preview today's post and check when it will be sent."
   }
 };
+
+function isRecord(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function normalizeSnapshot(value) {
+  const snapshot = isRecord(value) ? value : {};
+  const overview = isRecord(snapshot.overview) ? snapshot.overview : {};
+  const stats = isRecord(overview.stats) ? overview.stats : {};
+  const totals = isRecord(stats.totals) ? stats.totals : {};
+  const activeUsers = isRecord(stats.activeUsers) ? stats.activeUsers : {};
+  const contact = isRecord(overview.contact) ? overview.contact : {};
+  const marketing = isRecord(overview.marketing) ? overview.marketing : {};
+  const followups = isRecord(overview.followups) ? overview.followups : {};
+  const dueByStage = isRecord(followups.dueByStage) ? followups.dueByStage : {};
+  const schedules = isRecord(snapshot.schedules) ? snapshot.schedules : {};
+  const followupSchedule = isRecord(schedules.followups) ? schedules.followups : {};
+  const dailyBroadcast = isRecord(schedules.dailyBroadcast)
+    ? schedules.dailyBroadcast
+    : {};
+  const currentBroadcast = isRecord(dailyBroadcast.current)
+    ? dailyBroadcast.current
+    : {};
+  const environment = isRecord(snapshot.environment) ? snapshot.environment : {};
+
+  return {
+    ...snapshot,
+    overview: {
+      ...overview,
+      stats: {
+        ...stats,
+        storageMode: stats.storageMode || "unknown",
+        totals: {
+          uniqueUsers: 0,
+          proposalRequests: 0,
+          proposalSuccesses: 0,
+          proposalFailures: 0,
+          messages: 0,
+          commands: 0,
+          ...totals
+        },
+        activeUsers: {
+          last24Hours: 0,
+          last7Days: 0,
+          last30Days: 0,
+          ...activeUsers
+        },
+        topUsers: asArray(stats.topUsers)
+      },
+      contact: {
+        withEmail: 0,
+        withPhone: 0,
+        withFullContact: 0,
+        awaitingContact: 0,
+        ...contact
+      },
+      marketing: {
+        totalInterested: 0,
+        warmLeads: 0,
+        hotLeads: 0,
+        activeIn7Days: 0,
+        ...marketing,
+        trackCounts: asArray(marketing.trackCounts)
+      },
+      followups: {
+        dueNow: 0,
+        optedOut: 0,
+        errors: 0,
+        completedSequence: 0,
+        ...followups,
+        dueByStage: {
+          stage0: 0,
+          stage1: 0,
+          stage2: 0,
+          ...dueByStage
+        }
+      },
+      recentUsers: asArray(overview.recentUsers)
+    },
+    schedules: {
+      ...schedules,
+      followups: {
+        cron: "-",
+        localTime: "-",
+        path: "/api/cron/followups",
+        batchLimit: 25,
+        ...followupSchedule
+      },
+      dailyBroadcast: {
+        cron: "-",
+        localTime: "-",
+        path: "/api/cron/broadcasts/upwork-tips",
+        templateCount: 0,
+        ...dailyBroadcast,
+        current: {
+          key: "Unavailable",
+          index: 0,
+          isoDate: "-",
+          text: "No broadcast preview is available.",
+          trackKey: null,
+          trackLabel: null,
+          keyword: null,
+          ...currentBroadcast
+        }
+      }
+    },
+    environment: {
+      mode: "local",
+      dashboardKeySource: null,
+      botTokenConfigured: false,
+      ...environment
+    }
+  };
+}
 
 function formatNumber(value) {
   return new Intl.NumberFormat("en-US").format(Number(value || 0));
@@ -950,7 +1068,7 @@ function BroadcastView({ snapshot, stats, totalUsers }) {
 }
 
 export default function DashboardClient({ initialSnapshot, apiPath }) {
-  const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const [snapshot, setSnapshot] = useState(() => normalizeSnapshot(initialSnapshot));
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const [activeSection, setActiveSection] = useState("overview");
@@ -1024,7 +1142,7 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
         throw new Error(payload?.error || "Dashboard refresh failed");
       }
 
-      setSnapshot(payload.snapshot);
+      setSnapshot(normalizeSnapshot(payload.snapshot));
       setError("");
     } catch (refreshError) {
       setError(refreshError.message || "Dashboard refresh failed");
@@ -1163,3 +1281,4 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
     </main>
   );
 }
+
