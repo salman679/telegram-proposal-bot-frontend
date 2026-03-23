@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useTransition } from "react";
 
@@ -15,26 +15,10 @@ const MARKETING_TRACK_LABELS = {
   secret: "Winning Secret"
 };
 const SECTION_META = {
-  overview: {
-    label: "Overview",
-    title: "Overview",
-    copy: "See users, proposals, contacts, and follow-ups in one place."
-  },
-  audience: {
-    label: "Audience",
-    title: "Audience",
-    copy: "See recent users, saved contacts, and recent activity."
-  },
-  followups: {
-    label: "Follow-ups",
-    title: "Follow-ups",
-    copy: "See who needs a reminder and how the queue is doing."
-  },
-  broadcast: {
-    label: "Broadcast",
-    title: "Broadcasts",
-    copy: "Preview today's post and check when it will be sent."
-  }
+  overview: { label: "Overview", title: "Operations", note: "What matters now" },
+  audience: { label: "People", title: "Audience", note: "Users and signals" },
+  followups: { label: "Queue", title: "Follow-ups", note: "Reminder load" },
+  broadcast: { label: "Broadcast", title: "Daily tips", note: "Send and response" }
 };
 
 function isRecord(value) {
@@ -43,6 +27,14 @@ function isRecord(value) {
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+function clampPercent(value) {
+  return Math.max(0, Math.min(Number(value || 0), 100));
+}
+
+function getPercent(value, total) {
+  return total > 0 ? (Number(value || 0) / total) * 100 : 0;
 }
 
 function normalizeSnapshot(value) {
@@ -185,35 +177,58 @@ function getUserLabel(user) {
   }
 
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();
-  return fullName || `user ${user?.userId || "-"}`;
+  return fullName || `User ${user?.userId || "-"}`;
+}
+
+function getUserInitials(user) {
+  const source = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() || user?.username || "User";
+  return source
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("") || "U";
+}
+
+function getMissingContactCopy(user) {
+  const missing = [];
+
+  if (!user?.hasPhoneNumber) {
+    missing.push("phone");
+  }
+
+  if (!user?.hasEmail) {
+    missing.push("email");
+  }
+
+  return missing.length ? `Need ${missing.join(" + ")}` : "Contact saved";
 }
 
 function getContactStatus(user) {
   if (user?.hasEmail && user?.hasPhoneNumber) {
-    return { tone: "success", label: "Full contact" };
+    return { tone: "success", label: "Full" };
   }
 
   if (user?.hasEmail || user?.hasPhoneNumber) {
-    return { tone: "warning", label: "Partial contact" };
+    return { tone: "warning", label: "Partial" };
   }
 
   if (user?.pendingProposalText) {
-    return { tone: "accent", label: "Awaiting capture" };
+    return { tone: "accent", label: "Pending" };
   }
 
-  return { tone: "muted", label: "No contact" };
+  return { tone: "muted", label: "None" };
 }
 
 function getMarketingStatus(user) {
   if (!user?.marketingTrack || Number(user?.marketingSignalCount || 0) < 1) {
-    return { tone: "muted", label: "No signal" };
+    return null;
   }
 
   const stage = user?.marketingStage || "engaged";
   const tone = stage === "hot" ? "danger" : stage === "warm" ? "warning" : "info";
-  const label = `${MARKETING_TRACK_LABELS[user.marketingTrack] || user.marketingTrack} / ${stage}`;
+  const label = MARKETING_TRACK_LABELS[user.marketingTrack] || user.marketingTrack;
 
-  return { tone, label };
+  return { tone, label, stage };
 }
 
 function getFollowupStatus(user) {
@@ -224,7 +239,7 @@ function getFollowupStatus(user) {
   const stage = Number(user?.followupStage || 0);
 
   if (stage >= 3) {
-    return { tone: "success", label: "Completed" };
+    return { tone: "success", label: "Done" };
   }
 
   if (stage > 0) {
@@ -252,16 +267,14 @@ function getSystemHealth(snapshot) {
 
   return { tone: "success", label: "Healthy" };
 }
-
-function StatGlyph({ icon }) {
+function Glyph({ icon }) {
   switch (icon) {
     case "users":
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M16 19v-1.2c0-1.9-1.7-3.3-4-3.3s-4 1.4-4 3.3V19" />
           <path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-          <path d="M19 19v-.8c0-1.3-.8-2.4-2.2-2.9" />
-          <path d="M16.8 5.4A3.3 3.3 0 0 1 18.5 11" />
+          <path d="M19 18.2v-.4c0-1.3-.8-2.4-2.2-2.9" />
         </svg>
       );
     case "brief":
@@ -278,7 +291,6 @@ function StatGlyph({ icon }) {
           <rect x="4" y="5" width="16" height="14" rx="3" />
           <path d="M8 10.2h8" />
           <path d="M8 14h5" />
-          <circle cx="8.2" cy="8.2" r="1.2" fill="currentColor" stroke="none" />
         </svg>
       );
     case "bell":
@@ -294,41 +306,6 @@ function StatGlyph({ icon }) {
           <path d="M3 12h4l2.1-4.2L13 16l2.2-4H21" />
         </svg>
       );
-    case "calendar":
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="4" y="5" width="16" height="15" rx="3" />
-          <path d="M8 3.8v3.1" />
-          <path d="M16 3.8v3.1" />
-          <path d="M4 9.2h16" />
-          <path d="M8 13h3" />
-          <path d="M13 13h3" />
-          <path d="M8 16.2h3" />
-        </svg>
-      );
-    case "stack":
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m12 4 7 3.8-7 3.8L5 7.8 12 4Z" />
-          <path d="m5 11.3 7 3.8 7-3.8" />
-          <path d="m5 14.8 7 3.8 7-3.8" />
-        </svg>
-      );
-    case "check":
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m6.8 12.4 3.2 3.2 7.2-7.2" />
-          <circle cx="12" cy="12" r="8.5" />
-        </svg>
-      );
-    case "alert":
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 4.8 20 18.6a1 1 0 0 1-.9 1.4H4.9A1 1 0 0 1 4 18.6L12 4.8Z" />
-          <path d="M12 9.2v4.6" />
-          <circle cx="12" cy="17.1" r=".9" fill="currentColor" stroke="none" />
-        </svg>
-      );
     case "send":
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -336,320 +313,314 @@ function StatGlyph({ icon }) {
           <path d="M10.4 15.8 20 6.2" />
         </svg>
       );
-    case "template":
+    case "clock":
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="5" y="4" width="14" height="16" rx="3" />
-          <path d="M9 9.2h6" />
-          <path d="M9 12.2h6" />
-          <path d="M9 15.2h4" />
-        </svg>
-      );
-    case "spark":
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m12 4 1.7 4.3L18 10l-4.3 1.7L12 16l-1.7-4.3L6 10l4.3-1.7L12 4Z" />
-          <path d="m18.5 4.8.8 1.9 1.9.8-1.9.8-.8 1.9-.8-1.9-1.9-.8 1.9-.8.8-1.9Z" />
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M12 8v4.5l3 1.8" />
         </svg>
       );
     default:
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="7.5" />
+          <circle cx="12" cy="12" r="8.5" />
         </svg>
       );
   }
 }
 
-function StatCard({ label, value, meta, tone = "accent", icon = "spark" }) {
-  return (
-    <article className="stat-card">
-      <div className={`stat-icon tone-${tone}`} aria-hidden="true">
-        <StatGlyph icon={icon} />
-      </div>
-      <p className="stat-label">{label}</p>
-      <h2 className="stat-value">{value}</h2>
-      <p className="stat-meta">{meta}</p>
-    </article>
-  );
+function TonePill({ tone = "muted", children }) {
+  return <span className={`tone-pill tone-${tone}`}>{children}</span>;
 }
 
-function PanelHeader({ title, copy, action }) {
-  return (
-    <div className="panel-header">
-      <div>
-        <h2 className="panel-title">{title}</h2>
-        {copy ? <p className="panel-copy">{copy}</p> : null}
-      </div>
-      {action}
-    </div>
-  );
-}
-
-function ProgressRow({ label, value, total, tone = "accent" }) {
-  const width = total > 0 ? Math.min((value / total) * 100, 100) : 0;
-
-  return (
-    <div className="progress-row">
-      <div className="progress-meta">
-        <span>{label}</span>
-        <strong>{formatNumber(value)}</strong>
-      </div>
-      <div className="progress-track">
-        <div className={`progress-fill tone-${tone}`} style={{ width: `${width}%` }} />
-      </div>
-    </div>
-  );
-}
-
-function SectionButton({ id, activeSection, onSelect }) {
+function SectionButton({ id, activeSection, onSelect, badge }) {
   return (
     <button
       className={`nav-item ${activeSection === id ? "nav-item-active" : ""}`}
       onClick={() => onSelect(id)}
       type="button"
     >
-      {SECTION_META[id].label}
+      <span>{SECTION_META[id].label}</span>
+      {badge ? <span className="nav-count">{badge}</span> : null}
     </button>
   );
 }
 
-function SummaryPanel({ snapshot, stats }) {
+function HeroFact({ label, value }) {
   return (
-    <section className="panel">
-      <PanelHeader title="System" copy="Basic app settings." />
-      <div className="summary-list">
-        <div className="summary-row">
-          <span>Dashboard mode</span>
-          <strong>{snapshot.environment?.mode || "local"}</strong>
-        </div>
-        <div className="summary-row">
-          <span>Bot token configured</span>
-          <strong>{snapshot.environment?.botTokenConfigured ? "Yes" : "No"}</strong>
-        </div>
-        <div className="summary-row">
-          <span>Storage mode</span>
-          <strong>{stats?.storageMode || "unknown"}</strong>
-        </div>
-        <div className="summary-row">
-          <span>Key source</span>
-          <strong>{snapshot.environment?.dashboardKeySource || "not set"}</strong>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TopUsersPanel({ users }) {
-  return (
-    <section className="panel">
-      <PanelHeader title="Top users" copy="Users with the most requests and messages." />
-      <div className="leader-list">
-        {(users || []).slice(0, 5).map((user, index) => (
-          <div className="leader-row" key={`${user.userId}-${index}`}>
-            <div className="leader-rank">{String(index + 1).padStart(2, "0")}</div>
-            <div>
-              <strong>{getUserLabel(user)}</strong>
-              <p>
-                {formatNumber(user.proposalRequests)} requests and {formatNumber(user.messageCount)} messages
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function MarketingPanel({ marketing, totalUsers }) {
-  const trackRows = Array.isArray(marketing?.trackCounts)
-    ? marketing.trackCounts.filter((item) => Number(item?.count || 0) > 0)
-    : [];
-
-  return (
-    <section className="panel">
-      <PanelHeader title="Interested segments" copy="Users who replied to CTA keywords." />
-      <div className="mini-stats-grid">
-        <div className="mini-stat-card">
-          <span>Total interested</span>
-          <strong>{formatNumber(marketing?.totalInterested)}</strong>
-        </div>
-        <div className="mini-stat-card">
-          <span>Warm leads</span>
-          <strong>{formatNumber(marketing?.warmLeads)}</strong>
-        </div>
-        <div className="mini-stat-card">
-          <span>Hot leads</span>
-          <strong>{formatNumber(marketing?.hotLeads)}</strong>
-        </div>
-        <div className="mini-stat-card">
-          <span>Active in 7d</span>
-          <strong>{formatNumber(marketing?.activeIn7Days)}</strong>
-        </div>
-      </div>
-
-      {trackRows.length ? (
-        <div className="progress-stack compact-stack">
-          {trackRows.map((item) => (
-            <ProgressRow
-              key={item.trackKey}
-              label={`${item.label} (${item.keyword})`}
-              value={item.count}
-              total={Math.max(totalUsers, 1)}
-              tone="info"
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="panel-copy">No CTA signals yet.</p>
-      )}
-    </section>
-  );
-}
-
-function ContactBreakdownPanel({ rows, totalUsers }) {
-  return (
-    <section className="panel">
-      <PanelHeader title="Contact status" copy="How many users have saved phone or email." />
-      <div className="progress-stack compact-stack">
-        {rows.map((item) => (
-          <ProgressRow
-            key={item.label}
-            label={item.label}
-            value={item.value}
-            total={Math.max(totalUsers, 1)}
-            tone={item.tone}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function RecentUsersTable({ users }) {
-  return (
-    <div className="table-wrap">
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Requests</th>
-            <th>Messages</th>
-            <th>Contact</th>
-            <th>Interest</th>
-            <th>Follow-up</th>
-            <th>Last seen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(users || []).map((user) => {
-            const contact = getContactStatus(user);
-            const marketing = getMarketingStatus(user);
-            const followup = getFollowupStatus(user);
-
-            return (
-              <tr key={user.userId}>
-                <td>
-                  <div className="table-user">
-                    <strong>{getUserLabel(user)}</strong>
-                    <small>{user.userId}</small>
-                  </div>
-                </td>
-                <td>{formatNumber(user.proposalRequests)}</td>
-                <td>{formatNumber(user.messageCount)}</td>
-                <td>
-                  <span className={`badge tone-${contact.tone}`}>{contact.label}</span>
-                </td>
-                <td>
-                  <span className={`badge tone-${marketing.tone}`}>{marketing.label}</span>
-                </td>
-                <td>
-                  <span className={`badge tone-${followup.tone}`}>{followup.label}</span>
-                </td>
-                <td>{formatDate(user.lastSeenAt)}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div className="hero-fact">
+      <span>{label}</span>
+      <strong>{value}</strong>
     </div>
   );
 }
 
-function FollowupUsersTable({ users }) {
+function HeroPanel({ eyebrow, title, value, meta, tone = "accent", children }) {
   return (
-    <div className="table-wrap">
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Follow-up</th>
-            <th>Contact</th>
-            <th>Requests</th>
-            <th>Last seen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(users || []).map((user) => {
-            const contact = getContactStatus(user);
-            const marketing = getMarketingStatus(user);
-            const followup = getFollowupStatus(user);
+    <section className={`hero-panel hero-${tone}`}>
+      <span className="hero-kicker">{eyebrow}</span>
+      <h2 className="hero-title">{title}</h2>
+      <div className="hero-main">
+        <strong className="hero-value">{value}</strong>
+        <span className="hero-meta">{meta}</span>
+      </div>
+      {children}
+    </section>
+  );
+}
 
-            return (
-              <tr key={user.userId}>
-                <td>
-                  <div className="table-user">
-                    <strong>{getUserLabel(user)}</strong>
-                    <small>{user.userId}</small>
-                  </div>
-                </td>
-                <td>
-                  <span className={`badge tone-${followup.tone}`}>{followup.label}</span>
-                </td>
-                <td>
-                  <span className={`badge tone-${contact.tone}`}>{contact.label}</span>
-                </td>
-                <td>{formatNumber(user.proposalRequests)}</td>
-                <td>{formatDate(user.lastSeenAt)}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+function RingMeter({ label, value, tone = "accent", note, suffix = "%", decimals = 0 }) {
+  const safeValue = Number(value || 0);
+  const progress = clampPercent(safeValue);
+  const formatted = decimals > 0 ? safeValue.toFixed(decimals) : Math.round(safeValue);
+
+  return (
+    <article className="ring-card">
+      <div className={`ring-track tone-${tone}`} style={{ "--progress": `${progress}%` }}>
+        <div className="ring-center">
+          <strong>{formatted}{suffix}</strong>
+        </div>
+      </div>
+      <div className="ring-copy">
+        <span className="ring-label">{label}</span>
+        <span className="ring-note">{note}</span>
+      </div>
+    </article>
+  );
+}
+
+function MetricCard({ label, value, meta, tone = "accent", icon = "users" }) {
+  return (
+    <article className="metric-card">
+      <div className="metric-top">
+        <span className={`metric-icon tone-${tone}`}>
+          <Glyph icon={icon} />
+        </span>
+        <span className="metric-label">{label}</span>
+      </div>
+      <strong className="metric-value">{value}</strong>
+      {meta ? <span className="metric-meta">{meta}</span> : null}
+    </article>
+  );
+}
+
+function SignalCard({ label, value, meta, tone = "accent" }) {
+  return (
+    <article className={`signal-card signal-${tone}`}>
+      <span className="signal-label">{label}</span>
+      <strong className="signal-value">{value}</strong>
+      <span className="signal-meta">{meta}</span>
+    </article>
+  );
+}
+
+function ActionCard({ label, value, meta, hint, tone = "accent" }) {
+  return (
+    <article className={`action-card action-${tone}`}>
+      <div className="action-top">
+        <span className="action-label">{label}</span>
+        <span className={`action-dot tone-${tone}`} aria-hidden="true" />
+      </div>
+      <strong className="action-value">{value}</strong>
+      <strong className="action-meta">{meta}</strong>
+      {hint ? <span className="action-hint">{hint}</span> : null}
+    </article>
+  );
+}
+
+function PanelHeader({ title, action }) {
+  return (
+    <div className="panel-header">
+      <h2 className="panel-title">{title}</h2>
+      {action}
     </div>
   );
 }
 
-function AutomationPanel({ snapshot }) {
+function VisualBar({ label, value, total, tone = "accent" }) {
+  const width = total > 0 ? Math.min((value / total) * 100, 100) : 0;
+
+  return (
+    <div className="visual-bar-row">
+      <div className="visual-bar-top">
+        <span>{label}</span>
+        <strong>{formatNumber(value)}</strong>
+      </div>
+      <div className="visual-bar-track">
+        <div className={`visual-bar-fill tone-${tone}`} style={{ width: `${width}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }) {
+  return (
+    <div className="mini-stat">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function EmptyState({ label }) {
+  return <div className="empty-state">{label}</div>;
+}
+function UserCard({ user }) {
+  const contact = getContactStatus(user);
+  const marketing = getMarketingStatus(user);
+  const followup = getFollowupStatus(user);
+
+  return (
+    <article className="user-card">
+      <div className="user-head">
+        <div className="user-avatar">{getUserInitials(user)}</div>
+        <div className="user-copy">
+          <strong className="user-name">{getUserLabel(user)}</strong>
+          <span className="user-subtle">{user.userId || "-"}</span>
+        </div>
+      </div>
+      <div className="user-stats">
+        <span>{formatNumber(user.proposalRequests)} req</span>
+        <span>{formatNumber(user.messageCount)} msg</span>
+        <span>{formatDate(user.lastSeenAt)}</span>
+      </div>
+      <div className="user-tags">
+        <TonePill tone={contact.tone}>{contact.label}</TonePill>
+        <TonePill tone={followup.tone}>{followup.label}</TonePill>
+        {marketing ? <TonePill tone={marketing.tone}>{marketing.label}</TonePill> : null}
+      </div>
+    </article>
+  );
+}
+
+function TopUserCard({ user, index }) {
+  return (
+    <article className="rank-card">
+      <span className="rank-badge">{String(index + 1).padStart(2, "0")}</span>
+      <div className="user-head user-head-tight">
+        <div className="user-avatar user-avatar-small">{getUserInitials(user)}</div>
+        <div className="user-copy">
+          <strong className="user-name">{getUserLabel(user)}</strong>
+          <span className="user-subtle">{formatNumber(user.proposalRequests)} requests</span>
+        </div>
+      </div>
+      <div className="rank-metrics">
+        <span>{formatNumber(user.proposalRequests)} req</span>
+        <span>{formatNumber(user.messageCount)} msg</span>
+      </div>
+    </article>
+  );
+}
+
+function ScheduleCard({ label, time, meta, tone = "accent" }) {
+  return (
+    <article className={`schedule-card schedule-${tone}`}>
+      <span className="schedule-label">{label}</span>
+      <strong className="schedule-time">{time}</strong>
+      <span className="schedule-meta">{meta}</span>
+    </article>
+  );
+}
+
+function FocusPanel({ title, items, emptyLabel, tone = "muted" }) {
   return (
     <section className="panel">
-      <PanelHeader title="Automation" copy="Scheduled jobs running in Vercel." />
-      <div className="schedule-list">
-        <article className="schedule-item">
-          <div>
-            <p className="item-label">Follow-up cron</p>
-            <h3>{snapshot.schedules.followups.localTime}</h3>
-          </div>
-          <div className="item-meta">
-            <span>{snapshot.schedules.followups.cron}</span>
-            <span>{snapshot.schedules.followups.path}</span>
-          </div>
-        </article>
-        <article className="schedule-item">
-          <div>
-            <p className="item-label">Daily tips cron</p>
-            <h3>{snapshot.schedules.dailyBroadcast.localTime}</h3>
-          </div>
-          <div className="item-meta">
-            <span>{snapshot.schedules.dailyBroadcast.cron}</span>
-            <span>{snapshot.schedules.dailyBroadcast.path}</span>
-          </div>
-        </article>
+      <PanelHeader title={title} action={<TonePill tone={tone}>{items.length}</TonePill>} />
+      <div className="focus-list">
+        {items.length ? (
+          items.slice(0, 4).map((item) => (
+            <article className="focus-row" key={item.id}>
+              <div className="focus-main">
+                <strong className="focus-title">{item.title}</strong>
+                <span className="focus-subtle">{item.subtitle}</span>
+              </div>
+              <div className="focus-badges">
+                {(item.badges || []).map((badge) => (
+                  <TonePill key={`${item.id}-${badge.label}`} tone={badge.tone}>
+                    {badge.label}
+                  </TonePill>
+                ))}
+              </div>
+            </article>
+          ))
+        ) : (
+          <EmptyState label={emptyLabel} />
+        )}
       </div>
     </section>
   );
 }
 
+function buildPendingContactItems(users) {
+  return users
+    .filter((user) => user.pendingProposalText)
+    .map((user) => ({
+      id: `pending-${user.userId}`,
+      title: getUserLabel(user),
+      subtitle: getMissingContactCopy(user),
+      badges: [
+        { tone: getContactStatus(user).tone, label: getContactStatus(user).label },
+        { tone: "accent", label: "Saved draft" }
+      ]
+    }));
+}
+
+function buildHotLeadItems(users) {
+  return users
+    .filter((user) => {
+      const status = getMarketingStatus(user);
+      return status && (status.stage === "hot" || status.stage === "warm");
+    })
+    .sort((left, right) => Number(right.marketingSignalCount || 0) - Number(left.marketingSignalCount || 0))
+    .map((user) => {
+      const marketing = getMarketingStatus(user);
+      return {
+        id: `lead-${user.userId}`,
+        title: getUserLabel(user),
+        subtitle: `${formatNumber(user.marketingSignalCount)} signals`,
+        badges: [
+          { tone: marketing.tone, label: marketing.label },
+          { tone: "muted", label: formatDate(user.lastSeenAt) }
+        ]
+      };
+    });
+}
+
+function buildQueueIssueItems(users) {
+  return users
+    .filter((user) => user.lastFollowupErrorAt || Number(user.followupStage || 0) >= 2)
+    .sort((left, right) => Number(Boolean(right.lastFollowupErrorAt)) - Number(Boolean(left.lastFollowupErrorAt)))
+    .map((user) => {
+      const followup = getFollowupStatus(user);
+      return {
+        id: `queue-${user.userId}`,
+        title: getUserLabel(user),
+        subtitle: user.lastFollowupErrorAt ? `Error at ${formatDate(user.lastFollowupErrorAt)}` : `Waiting in ${followup.label}`,
+        badges: [
+          { tone: followup.tone, label: followup.label },
+          { tone: getContactStatus(user).tone, label: getContactStatus(user).label }
+        ]
+      };
+    });
+}
+
+function buildSignalItems(users) {
+  return users
+    .filter((user) => Number(user.marketingSignalCount || 0) > 0)
+    .sort((left, right) => Number(right.marketingSignalCount || 0) - Number(left.marketingSignalCount || 0))
+    .map((user) => {
+      const marketing = getMarketingStatus(user);
+      return {
+        id: `signal-${user.userId}`,
+        title: getUserLabel(user),
+        subtitle: `${formatNumber(user.marketingSignalCount)} replies`,
+        badges: [
+          marketing ? { tone: marketing.tone, label: marketing.label } : { tone: "muted", label: "Signal" },
+          { tone: "muted", label: formatDate(user.lastSeenAt) }
+        ]
+      };
+    });
+}
 function OverviewView({
   snapshot,
   stats,
@@ -662,226 +633,102 @@ function OverviewView({
   fullContact,
   contactCoverage,
   activityBars,
-  contactRows,
-  successRate
+  successRate,
+  recentUsers
 }) {
-  return (
-    <>
-      <section className="stat-grid">
-        <StatCard
-          label="Users"
-          value={formatNumber(totalUsers)}
-          meta={`${formatNumber(stats?.activeUsers?.last7Days)} active in 7 days`}
-          tone="accent"
-          icon="users"
-        />
-        <StatCard
-          label="Proposal requests"
-          value={formatNumber(proposalRequests)}
-          meta={`${formatNumber(proposalSuccesses)} successful generations`}
-          tone="info"
-          icon="brief"
-        />
-        <StatCard
-          label="Contact coverage"
-          value={formatPercent(contactCoverage)}
-          meta={`${formatNumber(fullContact)} users with phone and email`}
-          tone="success"
-          icon="contact"
-        />
-        <StatCard
-          label="Follow-ups due"
-          value={formatNumber(snapshot.overview?.followups?.dueNow)}
-          meta="Users eligible for the next reminder"
-          tone="warning"
-          icon="bell"
-        />
-      </section>
-
-      <section className="main-grid">
-        <section className="panel">
-          <PanelHeader
-            title="User activity"
-            copy="See how many users were active recently."
-          />
-          <div className="progress-stack">
-            {activityBars.map((item) => (
-              <ProgressRow
-                key={item.label}
-                label={item.label}
-                value={item.value}
-                total={Math.max(totalUsers, 1)}
-                tone={item.tone}
-              />
-            ))}
-          </div>
-
-          <div className="mini-stats-grid">
-            <div className="mini-stat-card">
-              <span>Total messages</span>
-              <strong>{formatNumber(totalMessages)}</strong>
-            </div>
-            <div className="mini-stat-card">
-              <span>Total commands</span>
-              <strong>{formatNumber(totalCommands)}</strong>
-            </div>
-            <div className="mini-stat-card">
-              <span>Success rate</span>
-              <strong>{formatPercent(successRate)}</strong>
-            </div>
-            <div className="mini-stat-card">
-              <span>Failures</span>
-              <strong>{formatNumber(proposalFailures)}</strong>
-            </div>
-          </div>
-        </section>
-
-        <div className="stack-grid">
-          <AutomationPanel snapshot={snapshot} />
-        </div>
-      </section>
-
-      <section className="bottom-grid">
-        <ContactBreakdownPanel rows={contactRows} totalUsers={totalUsers} />
-        <TopUsersPanel users={stats?.topUsers || []} />
-      </section>
-    </>
-  );
-}
-
-function AudienceView({ snapshot, stats, totalUsers, fullContact, contactRows, activityBars }) {
-  return (
-    <>
-      <section className="stat-grid">
-        <StatCard
-          label="Total users"
-          value={formatNumber(totalUsers)}
-          meta={`${formatNumber(fullContact)} full contacts captured`}
-          tone="accent"
-          icon="users"
-        />
-        <StatCard
-          label="Active in 24h"
-          value={formatNumber(stats?.activeUsers?.last24Hours)}
-          meta="Recent active users"
-          tone="info"
-          icon="pulse"
-        />
-        <StatCard
-          label="Active in 7d"
-          value={formatNumber(stats?.activeUsers?.last7Days)}
-          meta="Weekly active users"
-          tone="success"
-          icon="calendar"
-        />
-        <StatCard
-          label="Active in 30d"
-          value={formatNumber(stats?.activeUsers?.last30Days)}
-          meta="Monthly active users"
-          tone="warning"
-          icon="calendar"
-        />
-      </section>
-
-      <section className="main-grid">
-        <section className="panel" id="audience">
-          <PanelHeader
-            title="Recent users"
-            copy="Latest users, requests, contacts, reminders, and last activity."
-          />
-          <RecentUsersTable users={snapshot.overview?.recentUsers || []} />
-        </section>
-
-        <div className="stack-grid">
-          <section className="panel">
-            <PanelHeader title="Activity windows" copy="Activity by time range." />
-            <div className="progress-stack compact-stack">
-              {activityBars.map((item) => (
-                <ProgressRow
-                  key={item.label}
-                  label={item.label}
-                  value={item.value}
-                  total={Math.max(totalUsers, 1)}
-                  tone={item.tone}
-                />
-              ))}
-            </div>
-          </section>
-
-          <ContactBreakdownPanel rows={contactRows} totalUsers={totalUsers} />
-          <TopUsersPanel users={stats?.topUsers || []} />
-        </div>
-      </section>
-    </>
-  );
-}
-
-function FollowupsView({ snapshot, totalUsers }) {
-  const dueNow = Number(snapshot.overview?.followups?.dueNow || 0);
-  const errors = Number(snapshot.overview?.followups?.errors || 0);
-  const completedSequence = Number(snapshot.overview?.followups?.completedSequence || 0);
-  const followupRows = [
+  const dueNow = Number(snapshot.overview.followups.dueNow || 0);
+  const batchLimit = Number(snapshot.schedules.followups.batchLimit || 25);
+  const awaitingContact = Number(snapshot.overview.contact.awaitingContact || 0);
+  const interestedUsers = Number(snapshot.overview.marketing.totalInterested || 0);
+  const hotLeads = Number(snapshot.overview.marketing.hotLeads || 0);
+  const pendingItems = buildPendingContactItems(recentUsers);
+  const hotLeadItems = buildHotLeadItems(recentUsers);
+  const queueIssueItems = buildQueueIssueItems(recentUsers);
+  const actionItems = [
     {
-      label: "Due from stage 0",
-      value: Number(snapshot.overview?.followups?.dueByStage?.stage0 || 0),
-      tone: "accent"
+      label: "Queue load",
+      value: `${formatNumber(dueNow)}/${formatNumber(batchLimit)}`,
+      meta: dueNow > batchLimit ? "Needs extra runs" : "Queue stable",
+      hint: dueNow > batchLimit ? "Backlog high" : "On schedule",
+      tone: dueNow > batchLimit ? "warning" : "success"
     },
     {
-      label: "Due from stage 1",
-      value: Number(snapshot.overview?.followups?.dueByStage?.stage1 || 0),
-      tone: "info"
+      label: "Contact recovery",
+      value: formatNumber(awaitingContact),
+      meta: awaitingContact ? "Drafts blocked" : "No blocked drafts",
+      hint: awaitingContact ? "Recover users" : "Clear",
+      tone: awaitingContact ? "accent" : "muted"
     },
     {
-      label: "Due from stage 2",
-      value: Number(snapshot.overview?.followups?.dueByStage?.stage2 || 0),
-      tone: "warning"
+      label: "Hot leads",
+      value: formatNumber(hotLeads),
+      meta: interestedUsers ? `${formatNumber(interestedUsers)} interested` : "No live signals",
+      hint: hotLeads ? "Best to contact" : "Warm up audience",
+      tone: hotLeads ? "danger" : "muted"
     },
     {
-      label: "Completed sequence",
-      value: completedSequence,
-      tone: "success"
+      label: "Proposal health",
+      value: formatPercent(successRate),
+      meta: proposalFailures ? `${formatNumber(proposalFailures)} failed` : "Generation stable",
+      hint: proposalFailures ? "Check failures" : "Healthy",
+      tone: proposalFailures ? "warning" : "success"
     }
   ];
 
   return (
     <>
-      <section className="stat-grid">
-        <StatCard
-          label="Due now"
-          value={formatNumber(dueNow)}
-          meta="Ready for the next reminder"
+      <section className="hero-grid">
+        <HeroPanel
+          eyebrow="Live snapshot"
+          title="System pulse"
+          value={formatNumber(totalUsers)}
+          meta="Known users in the bot"
           tone="accent"
-          icon="bell"
-        />
-        <StatCard
-          label="Batch limit"
-          value={formatNumber(snapshot.schedules.followups.batchLimit)}
-          meta="Max reminder sends per cron run"
-          tone="warning"
-          icon="stack"
-        />
-        <StatCard
-          label="Completed"
-          value={formatNumber(completedSequence)}
-          meta="Reached stage 3"
-          tone="success"
-          icon="check"
-        />
-        <StatCard
-          label="Errors"
-          value={formatNumber(errors)}
-          meta="Latest reminder failures"
-          tone="danger"
-          icon="alert"
-        />
+        >
+          <div className="hero-fact-grid">
+            <HeroFact label="Requests" value={formatNumber(proposalRequests)} />
+            <HeroFact label="Due now" value={formatNumber(dueNow)} />
+            <HeroFact label="Hot leads" value={formatNumber(hotLeads)} />
+          </div>
+        </HeroPanel>
+
+        <div className="ring-grid">
+          <RingMeter
+            label="Contact"
+            value={contactCoverage}
+            note={`${formatNumber(fullContact)} full profiles`}
+            tone="success"
+            decimals={1}
+          />
+          <RingMeter
+            label="Success"
+            value={successRate}
+            note={`${formatNumber(proposalSuccesses)} successful`}
+            tone="accent"
+            decimals={1}
+          />
+          <RingMeter
+            label="Weekly active"
+            value={getPercent(stats.activeUsers.last7Days, totalUsers)}
+            note={`${formatNumber(stats.activeUsers.last7Days)} active in 7d`}
+            tone="info"
+            decimals={1}
+          />
+        </div>
       </section>
 
-      <section className="main-grid">
-        <section className="panel" id="followups">
-          <PanelHeader title="Reminder stages" copy="Users waiting in each reminder step." />
-          <div className="progress-stack compact-stack">
-            {followupRows.map((item) => (
-              <ProgressRow
+      <section className="action-grid">
+        {actionItems.map((item) => (
+          <ActionCard key={item.label} {...item} />
+        ))}
+      </section>
+
+      <section className="content-grid content-grid-main">
+        <section className="panel panel-large">
+          <PanelHeader title="Activity" action={<TonePill tone="muted">30d window</TonePill>} />
+          <div className="visual-bar-stack">
+            {activityBars.map((item) => (
+              <VisualBar
                 key={item.label}
                 label={item.label}
                 value={item.value}
@@ -890,178 +737,372 @@ function FollowupsView({ snapshot, totalUsers }) {
               />
             ))}
           </div>
-
-          <div className="mini-stats-grid">
-            <div className="mini-stat-card">
-              <span>Batch limit</span>
-              <strong>{formatNumber(snapshot.schedules.followups.batchLimit)}</strong>
-            </div>
-            <div className="mini-stat-card">
-              <span>Send time</span>
-              <strong>{snapshot.schedules.followups.localTime}</strong>
-            </div>
-            <div className="mini-stat-card">
-              <span>Cron</span>
-              <strong>{snapshot.schedules.followups.cron}</strong>
-            </div>
-            <div className="mini-stat-card">
-              <span>Path</span>
-              <strong>{snapshot.schedules.followups.path}</strong>
-            </div>
+          <div className="mini-stat-grid">
+            <MiniStat label="Messages" value={formatNumber(totalMessages)} />
+            <MiniStat label="Commands" value={formatNumber(totalCommands)} />
+            <MiniStat label="Success" value={formatPercent(successRate)} />
+            <MiniStat label="Failures" value={formatNumber(proposalFailures)} />
           </div>
         </section>
 
-        <div className="stack-grid">
-          <section className="panel">
-            <PanelHeader title="Quick summary" copy="Simple view of current reminder load." />
-            <div className="summary-list">
-              <div className="summary-row">
-                <span>Due now</span>
-                <strong>{formatNumber(dueNow)}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Batch limit</span>
-                <strong>{formatNumber(snapshot.schedules.followups.batchLimit)}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Error records</span>
-                <strong>{formatNumber(errors)}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Completed sequence</span>
-                <strong>{formatNumber(completedSequence)}</strong>
-              </div>
-            </div>
-          </section>
-
-          <section className="panel">
-            <PanelHeader title="Reminder schedule" copy="When the bot sends follow-up messages." />
-            <div className="schedule-list">
-              <article className="schedule-item">
-                <div>
-                  <p className="item-label">Follow-up schedule</p>
-                  <h3>{snapshot.schedules.followups.localTime}</h3>
-                </div>
-                <div className="item-meta">
-                  <span>{snapshot.schedules.followups.cron}</span>
-                  <span>{snapshot.schedules.followups.path}</span>
-                </div>
-              </article>
-            </div>
-          </section>
-        </div>
+        <section className="panel">
+          <PanelHeader title="Pipeline" />
+          <div className="compact-stack">
+            <VisualBar label="Active in 7d" value={stats.activeUsers.last7Days} total={Math.max(totalUsers, 1)} tone="accent" />
+            <VisualBar label="Interested" value={interestedUsers} total={Math.max(totalUsers, 1)} tone="info" />
+            <VisualBar label="Full contact" value={fullContact} total={Math.max(totalUsers, 1)} tone="success" />
+            <VisualBar label="Awaiting contact" value={awaitingContact} total={Math.max(totalUsers, 1)} tone="warning" />
+          </div>
+        </section>
       </section>
 
-      <section className="panel">
-        <PanelHeader title="Recent reminder status" copy="Latest users and their follow-up status." />
-        <FollowupUsersTable users={snapshot.overview?.recentUsers || []} />
+      <section className="content-grid">
+        <FocusPanel title="Pending contact" items={pendingItems} emptyLabel="No stalled proposal users" tone="warning" />
+        <FocusPanel title="Hot leads" items={hotLeadItems} emptyLabel="No hot leads in recent users" tone="danger" />
+      </section>
+
+      <section className="content-grid">
+        <FocusPanel title="Queue issues" items={queueIssueItems} emptyLabel="No visible queue problems" tone="accent" />
+        <section className="panel">
+          <PanelHeader title="Top users" action={<TonePill tone="muted">{stats.topUsers.length}</TonePill>} />
+          <div className="rank-grid">
+            {stats.topUsers.length ? (
+              stats.topUsers.slice(0, 4).map((user, index) => (
+                <TopUserCard key={`${user.userId || index}-${index}`} user={user} index={index} />
+              ))
+            ) : (
+              <EmptyState label="No user data" />
+            )}
+          </div>
+        </section>
       </section>
     </>
   );
 }
 
-function BroadcastView({ snapshot, stats, totalUsers }) {
-  const current = snapshot.schedules.dailyBroadcast.current;
+function AudienceView({
+  snapshot,
+  stats,
+  totalUsers,
+  fullContact,
+  contactCoverage,
+  contactRows,
+  marketingTracks,
+  recentUsers
+}) {
+  const signalItems = buildSignalItems(recentUsers);
+  const engagedUsers = Number(snapshot.overview.marketing.totalInterested || 0);
+  const hotLeads = Number(snapshot.overview.marketing.hotLeads || 0);
 
   return (
     <>
-      <section className="stat-grid">
-        <StatCard
-          label="Send time"
-          value={snapshot.schedules.dailyBroadcast.localTime}
-          meta={snapshot.schedules.dailyBroadcast.cron}
-          tone="accent"
-          icon="send"
-        />
-        <StatCard
-          label="Templates"
-          value={formatNumber(snapshot.schedules.dailyBroadcast.templateCount)}
-          meta="Rotating Bangla tip library"
-          tone="info"
-          icon="template"
-        />
-        <StatCard
-          label="Current template"
-          value={formatNumber(current.index)}
-          meta={current.isoDate}
-          tone="success"
-          icon="spark"
-        />
-        <StatCard
-          label="Known users"
+      <section className="hero-grid">
+        <HeroPanel
+          eyebrow="Audience"
+          title="People pulse"
           value={formatNumber(totalUsers)}
-          meta="Broadcast sends from the current known audience"
-          tone="warning"
-          icon="users"
-        />
-      </section>
-
-      <section className="main-grid" id="broadcast">
-        <section className="panel">
-          <PanelHeader
-            title="Today's post"
-            copy={`Template ${current.index} of ${snapshot.schedules.dailyBroadcast.templateCount}`}
-          />
-          <div className="broadcast-meta">
-            <span className="status-chip">{current.isoDate}</span>
-            <span className="status-chip">{current.key}</span>
+          meta="Known users"
+          tone="info"
+        >
+          <div className="hero-fact-grid">
+            <HeroFact label="24h active" value={formatNumber(stats.activeUsers.last24Hours)} />
+            <HeroFact label="Interested" value={formatNumber(engagedUsers)} />
+            <HeroFact label="Hot leads" value={formatNumber(hotLeads)} />
           </div>
-          <div className="message-preview">{current.text}</div>
-        </section>
+        </HeroPanel>
 
-        <div className="stack-grid">
-          <section className="panel">
-            <PanelHeader title="Send settings" copy="Time, route, and campaign key." />
-            <div className="summary-list">
-              <div className="summary-row">
-                <span>Send time</span>
-                <strong>{snapshot.schedules.dailyBroadcast.localTime}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Cron</span>
-                <strong>{snapshot.schedules.dailyBroadcast.cron}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Route</span>
-                <strong>{snapshot.schedules.dailyBroadcast.path}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Current key</span>
-                <strong>{current.key}</strong>
-              </div>
-            </div>
-          </section>
-
-          <section className="panel">
-            <PanelHeader title="Audience size" copy="Users available for daily posts." />
-            <div className="summary-list">
-              <div className="summary-row">
-                <span>Total known users</span>
-                <strong>{formatNumber(totalUsers)}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Batch limit</span>
-                <strong>{formatNumber(snapshot.schedules.followups.batchLimit)}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Template index</span>
-                <strong>{formatNumber(current.index)}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Storage mode</span>
-                <strong>{stats?.storageMode || "unknown"}</strong>
-              </div>
-            </div>
-          </section>
+        <div className="ring-grid">
+          <RingMeter
+            label="Contact"
+            value={contactCoverage}
+            note={`${formatNumber(fullContact)} full contacts`}
+            tone="success"
+            decimals={1}
+          />
+          <RingMeter
+            label="Interested"
+            value={getPercent(engagedUsers, totalUsers)}
+            note={`${formatNumber(engagedUsers)} replied`}
+            tone="info"
+            decimals={1}
+          />
+          <RingMeter
+            label="Weekly active"
+            value={getPercent(stats.activeUsers.last7Days, totalUsers)}
+            note={`${formatNumber(stats.activeUsers.last7Days)} active in 7d`}
+            tone="accent"
+            decimals={1}
+          />
         </div>
       </section>
 
-      <section className="bottom-grid">
-        <TopUsersPanel users={stats?.topUsers || []} />
-        <MarketingPanel
-          marketing={snapshot.overview?.marketing}
-          totalUsers={totalUsers}
+      <section className="content-grid">
+        <section className="panel">
+          <PanelHeader title="Contact mix" />
+          <div className="compact-stack">
+            {contactRows.map((item) => (
+              <VisualBar
+                key={item.label}
+                label={item.label}
+                value={item.value}
+                total={Math.max(totalUsers, 1)}
+                tone={item.tone}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="panel">
+          <PanelHeader title="Interest map" />
+          <div className="compact-stack">
+            {marketingTracks.length ? (
+              marketingTracks.map((item) => (
+                <VisualBar
+                  key={item.trackKey}
+                  label={item.label}
+                  value={item.count}
+                  total={Math.max(totalUsers, 1)}
+                  tone="info"
+                />
+              ))
+            ) : (
+              <EmptyState label="No signals yet" />
+            )}
+          </div>
+        </section>
+      </section>
+
+      <section className="content-grid">
+        <FocusPanel title="Recent signal users" items={signalItems} emptyLabel="No signal activity in recent users" tone="info" />
+        <section className="panel">
+          <PanelHeader title="Recent users" action={<TonePill tone="muted">{recentUsers.length}</TonePill>} />
+          <div className="user-grid">
+            {recentUsers.length ? (
+              recentUsers.slice(0, 6).map((user) => <UserCard key={user.userId} user={user} />)
+            ) : (
+              <EmptyState label="No recent users" />
+            )}
+          </div>
+        </section>
+      </section>
+    </>
+  );
+}
+function FollowupsView({ snapshot, totalUsers, recentUsers }) {
+  const dueNow = Number(snapshot.overview.followups.dueNow || 0);
+  const stage0 = Number(snapshot.overview.followups.dueByStage.stage0 || 0);
+  const stage1 = Number(snapshot.overview.followups.dueByStage.stage1 || 0);
+  const stage2 = Number(snapshot.overview.followups.dueByStage.stage2 || 0);
+  const errors = Number(snapshot.overview.followups.errors || 0);
+  const completedSequence = Number(snapshot.overview.followups.completedSequence || 0);
+  const batchLimit = Number(snapshot.schedules.followups.batchLimit || 25);
+  const queueItems = buildQueueIssueItems(recentUsers);
+  const pendingItems = buildPendingContactItems(recentUsers);
+
+  return (
+    <>
+      <section className="hero-grid">
+        <HeroPanel
+          eyebrow="Queue"
+          title="Reminder load"
+          value={formatNumber(dueNow)}
+          meta={`Batch ${formatNumber(batchLimit)} at ${snapshot.schedules.followups.localTime}`}
+          tone={errors > 0 ? "danger" : "warning"}
+        >
+          <div className="hero-fact-grid">
+            <HeroFact label="Stage 0" value={formatNumber(stage0)} />
+            <HeroFact label="Stage 2" value={formatNumber(stage2)} />
+            <HeroFact label="Errors" value={formatNumber(errors)} />
+          </div>
+        </HeroPanel>
+
+        <div className="ring-grid">
+          <RingMeter
+            label="Capacity"
+            value={getPercent(dueNow, Math.max(batchLimit, 1))}
+            note={`${formatNumber(dueNow)} / ${formatNumber(batchLimit)}`}
+            tone="warning"
+            decimals={1}
+          />
+          <RingMeter
+            label="Stage 2 risk"
+            value={getPercent(stage2, Math.max(dueNow, 1))}
+            note={`${formatNumber(stage2)} oldest`}
+            tone="danger"
+            decimals={1}
+          />
+          <RingMeter
+            label="Completed"
+            value={getPercent(completedSequence, totalUsers)}
+            note={`${formatNumber(completedSequence)} finished`}
+            tone="success"
+            decimals={1}
+          />
+        </div>
+      </section>
+
+      <section className="action-grid">
+        <ActionCard
+          label="Due now"
+          value={formatNumber(dueNow)}
+          meta={dueNow > batchLimit ? "Needs extra runs" : "Ready to send"}
+          hint={dueNow > batchLimit ? "Backlog high" : "On schedule"}
+          tone={dueNow > batchLimit ? "warning" : "success"}
         />
+        <ActionCard
+          label="Errors"
+          value={formatNumber(errors)}
+          meta={errors ? "Delivery issues" : "No failures"}
+          hint={errors ? "Check chats" : "Clear"}
+          tone={errors ? "danger" : "success"}
+        />
+        <ActionCard
+          label="Stage 2"
+          value={formatNumber(stage2)}
+          meta={stage2 ? "Oldest queue" : "No aged users"}
+          hint={stage2 ? "Final reminder" : "Clear"}
+          tone={stage2 ? "warning" : "muted"}
+        />
+        <ActionCard
+          label="Done"
+          value={formatNumber(completedSequence)}
+          meta="Finished flow"
+          hint="Completed"
+          tone="info"
+        />
+      </section>
+
+      <section className="content-grid">
+        <section className="panel">
+          <PanelHeader title="Stage spread" />
+          <div className="compact-stack">
+            <VisualBar label="Stage 0" value={stage0} total={Math.max(totalUsers, 1)} tone="accent" />
+            <VisualBar label="Stage 1" value={stage1} total={Math.max(totalUsers, 1)} tone="info" />
+            <VisualBar label="Stage 2" value={stage2} total={Math.max(totalUsers, 1)} tone="warning" />
+            <VisualBar label="Done" value={completedSequence} total={Math.max(totalUsers, 1)} tone="success" />
+          </div>
+        </section>
+
+        <section className="panel">
+          <PanelHeader title="Run window" />
+          <div className="schedule-grid schedule-grid-single">
+            <ScheduleCard
+              label="Follow-up"
+              time={snapshot.schedules.followups.localTime}
+              meta={snapshot.schedules.followups.cron}
+              tone="warning"
+            />
+          </div>
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Due" value={formatNumber(dueNow)} />
+            <MiniStat label="Batch" value={formatNumber(batchLimit)} />
+            <MiniStat label="Errors" value={formatNumber(errors)} />
+            <MiniStat label="Done" value={formatNumber(completedSequence)} />
+          </div>
+        </section>
+      </section>
+
+      <section className="content-grid">
+        <FocusPanel title="Queue issues" items={queueItems} emptyLabel="No queue issues in recent users" tone="danger" />
+        <FocusPanel title="Pending contact" items={pendingItems} emptyLabel="No saved drafts waiting for contact" tone="warning" />
+      </section>
+    </>
+  );
+}
+
+function BroadcastView({ snapshot, totalUsers, marketingTracks, stats, recentUsers }) {
+  const current = snapshot.schedules.dailyBroadcast.current;
+  const signalItems = buildSignalItems(recentUsers);
+  const interestedUsers = Number(snapshot.overview.marketing.totalInterested || 0);
+
+  return (
+    <>
+      <section className="hero-grid">
+        <HeroPanel
+          eyebrow="Broadcast"
+          title="Daily tips"
+          value={snapshot.schedules.dailyBroadcast.localTime}
+          meta={current.isoDate}
+          tone="accent"
+        >
+          <div className="hero-fact-grid">
+            <HeroFact label="Template" value={formatNumber(current.index)} />
+            <HeroFact label="Keyword" value={current.keyword || "-"} />
+            <HeroFact label="Audience" value={formatNumber(totalUsers)} />
+          </div>
+        </HeroPanel>
+
+        <div className="ring-grid">
+          <RingMeter
+            label="Template progress"
+            value={getPercent(current.index, Math.max(snapshot.schedules.dailyBroadcast.templateCount, 1))}
+            note={`${formatNumber(current.index)} / ${formatNumber(snapshot.schedules.dailyBroadcast.templateCount)}`}
+            tone="accent"
+            decimals={1}
+          />
+          <RingMeter
+            label="Interested"
+            value={getPercent(interestedUsers, totalUsers)}
+            note={`${formatNumber(interestedUsers)} replied`}
+            tone="info"
+            decimals={1}
+          />
+          <RingMeter
+            label="Weekly active"
+            value={getPercent(stats.activeUsers.last7Days, totalUsers)}
+            note={`${formatNumber(stats.activeUsers.last7Days)} active in 7d`}
+            tone="success"
+            decimals={1}
+          />
+        </div>
+      </section>
+
+      <section className="content-grid content-grid-main">
+        <section className="panel panel-large">
+          <PanelHeader title="Today's message" action={<TonePill tone="muted">{current.key}</TonePill>} />
+          <div className="message-preview">{current.text}</div>
+        </section>
+
+        <section className="panel">
+          <PanelHeader title="Signal mix" />
+          <div className="compact-stack">
+            {marketingTracks.length ? (
+              marketingTracks.map((item) => (
+                <VisualBar
+                  key={item.trackKey}
+                  label={item.label}
+                  value={item.count}
+                  total={Math.max(totalUsers, 1)}
+                  tone="info"
+                />
+              ))
+            ) : (
+              <EmptyState label="No CTA replies" />
+            )}
+          </div>
+          <div className="divider" />
+          <div className="schedule-grid schedule-grid-single">
+            <ScheduleCard
+              label="Send"
+              time={snapshot.schedules.dailyBroadcast.localTime}
+              meta={snapshot.schedules.dailyBroadcast.cron}
+              tone="accent"
+            />
+          </div>
+        </section>
+      </section>
+
+      <section className="content-grid">
+        <FocusPanel title="Recent signal users" items={signalItems} emptyLabel="No recent campaign replies" tone="info" />
+        <section className="panel">
+          <PanelHeader title="Broadcast stats" />
+          <div className="mini-stat-grid mini-stat-grid-wide">
+            <MiniStat label="Templates" value={formatNumber(snapshot.schedules.dailyBroadcast.templateCount)} />
+            <MiniStat label="Current" value={formatNumber(current.index)} />
+            <MiniStat label="Interested" value={formatNumber(interestedUsers)} />
+            <MiniStat label="Hot leads" value={formatNumber(snapshot.overview.marketing.hotLeads)} />
+          </div>
+        </section>
       </section>
     </>
   );
@@ -1073,47 +1114,76 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
   const [isPending, startTransition] = useTransition();
   const [activeSection, setActiveSection] = useState("overview");
 
-  const stats = snapshot.overview?.stats;
-  const totalUsers = Number(stats?.totals?.uniqueUsers || 0);
-  const proposalRequests = Number(stats?.totals?.proposalRequests || 0);
-  const proposalSuccesses = Number(stats?.totals?.proposalSuccesses || 0);
-  const proposalFailures = Number(stats?.totals?.proposalFailures || 0);
-  const totalMessages = Number(stats?.totals?.messages || 0);
-  const totalCommands = Number(stats?.totals?.commands || 0);
-  const fullContact = Number(snapshot.overview?.contact?.withFullContact || 0);
-  const withEmail = Number(snapshot.overview?.contact?.withEmail || 0);
-  const withPhone = Number(snapshot.overview?.contact?.withPhone || 0);
-  const awaitingContact = Number(snapshot.overview?.contact?.awaitingContact || 0);
+  const stats = snapshot.overview.stats;
+  const recentUsers = snapshot.overview.recentUsers;
+  const totalUsers = Number(stats.totals.uniqueUsers || 0);
+  const proposalRequests = Number(stats.totals.proposalRequests || 0);
+  const proposalSuccesses = Number(stats.totals.proposalSuccesses || 0);
+  const proposalFailures = Number(stats.totals.proposalFailures || 0);
+  const totalMessages = Number(stats.totals.messages || 0);
+  const totalCommands = Number(stats.totals.commands || 0);
+  const fullContact = Number(snapshot.overview.contact.withFullContact || 0);
+  const withEmail = Number(snapshot.overview.contact.withEmail || 0);
+  const withPhone = Number(snapshot.overview.contact.withPhone || 0);
+  const awaitingContact = Number(snapshot.overview.contact.awaitingContact || 0);
+  const interestedUsers = Number(snapshot.overview.marketing.totalInterested || 0);
+  const hotLeads = Number(snapshot.overview.marketing.hotLeads || 0);
+  const followupDue = Number(snapshot.overview.followups.dueNow || 0);
+  const followupBatchLimit = Number(snapshot.schedules.followups.batchLimit || 25);
   const partialContact = Math.max(withEmail + withPhone - fullContact * 2, 0);
   const noContact = Math.max(totalUsers - fullContact - partialContact, 0);
   const successRate = proposalRequests > 0 ? (proposalSuccesses / proposalRequests) * 100 : 0;
   const contactCoverage = totalUsers > 0 ? (fullContact / totalUsers) * 100 : 0;
   const health = getSystemHealth(snapshot);
-
-  const activityBars = [
+  const marketingTracks = snapshot.overview.marketing.trackCounts.filter(
+    (item) => Number(item?.count || 0) > 0
+  );
+  const signalItems = [
     {
-      label: "Active in 24 hours",
-      value: Number(stats?.activeUsers?.last24Hours || 0),
+      label: "Users",
+      value: formatNumber(totalUsers),
+      meta: `${formatNumber(stats.activeUsers.last7Days)} active in 7d`,
       tone: "accent"
     },
     {
-      label: "Active in 7 days",
-      value: Number(stats?.activeUsers?.last7Days || 0),
-      tone: "info"
+      label: "Queue",
+      value: formatNumber(followupDue),
+      meta: `Batch ${formatNumber(followupBatchLimit)}`,
+      tone: followupDue > followupBatchLimit ? "warning" : "success"
     },
     {
-      label: "Active in 30 days",
-      value: Number(stats?.activeUsers?.last30Days || 0),
-      tone: "success"
+      label: "Hot leads",
+      value: formatNumber(hotLeads),
+      meta: interestedUsers ? `${formatNumber(interestedUsers)} interested` : "No active signals",
+      tone: hotLeads ? "danger" : "info"
+    },
+    {
+      label: "Success",
+      value: formatPercent(successRate),
+      meta: proposalFailures ? `${formatNumber(proposalFailures)} failed` : "Generation stable",
+      tone: proposalFailures ? "warning" : "success"
     }
   ];
 
-  const contactRows = [
-    { label: "Full contact", value: fullContact, tone: "success" },
-    { label: "Partial contact", value: partialContact, tone: "warning" },
-    { label: "Awaiting capture", value: awaitingContact, tone: "accent" },
-    { label: "No stored contact", value: noContact, tone: "muted" }
+  const activityBars = [
+    { label: "24h", value: Number(stats.activeUsers.last24Hours || 0), tone: "accent" },
+    { label: "7d", value: Number(stats.activeUsers.last7Days || 0), tone: "info" },
+    { label: "30d", value: Number(stats.activeUsers.last30Days || 0), tone: "success" }
   ];
+
+  const contactRows = [
+    { label: "Full", value: fullContact, tone: "success" },
+    { label: "Partial", value: partialContact, tone: "warning" },
+    { label: "Pending", value: awaitingContact, tone: "accent" },
+    { label: "None", value: noContact, tone: "muted" }
+  ];
+
+  const navCounts = {
+    overview: formatNumber(totalUsers),
+    audience: formatNumber(recentUsers.length),
+    followups: formatNumber(followupDue),
+    broadcast: formatNumber(interestedUsers)
+  };
 
   useEffect(() => {
     function syncFromHash() {
@@ -1183,18 +1253,28 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
           stats={stats}
           totalUsers={totalUsers}
           fullContact={fullContact}
+          contactCoverage={contactCoverage}
           contactRows={contactRows}
-          activityBars={activityBars}
+          marketingTracks={marketingTracks}
+          recentUsers={recentUsers}
         />
       );
     }
 
     if (activeSection === "followups") {
-      return <FollowupsView snapshot={snapshot} totalUsers={totalUsers} />;
+      return <FollowupsView snapshot={snapshot} totalUsers={totalUsers} recentUsers={recentUsers} />;
     }
 
     if (activeSection === "broadcast") {
-      return <BroadcastView snapshot={snapshot} stats={stats} totalUsers={totalUsers} />;
+      return (
+        <BroadcastView
+          snapshot={snapshot}
+          totalUsers={totalUsers}
+          marketingTracks={marketingTracks}
+          stats={stats}
+          recentUsers={recentUsers}
+        />
+      );
     }
 
     return (
@@ -1210,13 +1290,11 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
         fullContact={fullContact}
         contactCoverage={contactCoverage}
         activityBars={activityBars}
-        contactRows={contactRows}
         successRate={successRate}
+        recentUsers={recentUsers}
       />
     );
   }
-
-  const currentSection = SECTION_META[activeSection] || SECTION_META.overview;
 
   return (
     <main className="ops-layout">
@@ -1224,7 +1302,7 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
         <div className="brand-block">
           <div className="brand-mark">PB</div>
           <div className="brand-text">
-            <p className="brand-kicker">Telegram Proposal Bot</p>
+            <span className="brand-kicker">Telegram Proposal Bot</span>
             <h1 className="brand-title">Dashboard</h1>
           </div>
         </div>
@@ -1234,51 +1312,47 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
             <SectionButton
               key={sectionId}
               id={sectionId}
+              badge={navCounts[sectionId]}
               activeSection={activeSection}
               onSelect={handleSectionChange}
             />
           ))}
         </nav>
 
-        <div className="sidebar-card">
-          <p className="sidebar-label">Environment</p>
-          <div className="sidebar-meta-row">
-            <span>Mode</span>
-            <strong>{snapshot.environment?.mode || "local"}</strong>
-          </div>
-          <div className="sidebar-meta-row">
-            <span>Storage</span>
-            <strong>{stats?.storageMode || "unknown"}</strong>
-          </div>
-          <div className="sidebar-meta-row">
-            <span>Key source</span>
-            <strong>{snapshot.environment?.dashboardKeySource || "not set"}</strong>
-          </div>
+        <div className="sidebar-footer">
+          <TonePill tone="muted">{snapshot.environment.mode}</TonePill>
+          <TonePill tone="muted">{stats.storageMode}</TonePill>
+          <TonePill tone={health.tone}>{health.label}</TonePill>
         </div>
       </aside>
 
       <div className="workspace">
-        <header className="topbar" id="overview">
-          <div className="page-intro">
-            <p className="page-kicker">Operations / {currentSection.label}</p>
-            <h1 className="page-title">{currentSection.title}</h1>
-            <p className="page-copy">{currentSection.copy}</p>
+        <header className="topbar">
+          <div className="page-head">
+            <span className="page-kicker">{SECTION_META[activeSection].note}</span>
+            <h1 className="page-title">{SECTION_META[activeSection].title}</h1>
           </div>
 
           <div className="topbar-actions">
-            <div className={`status-chip tone-${health.tone}`}>System: {health.label}</div>
-            <div className="status-chip">Updated: {formatDate(snapshot.generatedAt)}</div>
+            <TonePill tone="muted">Updated {formatDate(snapshot.generatedAt)}</TonePill>
             <button className="refresh-button" onClick={handleRefresh} type="button">
-              {isPending ? "Refreshing..." : "Refresh"}
+              {isPending ? "Refreshing" : "Refresh"}
             </button>
           </div>
         </header>
 
         {error ? <div className="error-banner">{error}</div> : null}
 
+        <section className="signal-strip" aria-label="Live admin signals">
+          {signalItems.map((item) => (
+            <SignalCard key={item.label} {...item} />
+          ))}
+        </section>
+
         {renderSection()}
       </div>
     </main>
   );
 }
+
 
