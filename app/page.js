@@ -1,20 +1,19 @@
-import DashboardClient from "./dashboard-client";
+﻿import DashboardClient from "./dashboard-client";
 import {
   fetchDashboardSnapshot,
-  buildOverviewApiPath,
-  getDashboardStatus
+  buildOverviewApiPath
 } from "../lib/admin-data";
 
 export const dynamic = "force-dynamic";
 
 function AccessGate({ status }) {
   const title =
-    status === "unconfigured"
-      ? "Dashboard key not set"
+    status === "unauthorized"
+      ? "Invalid dashboard key"
       : "Enter dashboard key";
   const copy =
-    status === "unconfigured"
-      ? "Add DASHBOARD_API_KEY or STATS_API_KEY to the frontend env, then reload this page."
+    status === "unauthorized"
+      ? "The provided key was rejected by the backend. Check the deployed backend project's DASHBOARD_API_KEY and try again."
       : "Use your dashboard key to open the admin view.";
 
   return (
@@ -58,11 +57,10 @@ function ErrorState({ message }) {
 
 export default async function Page({ searchParams }) {
   const params = await searchParams;
-  const key = typeof params?.key === "string" ? params.key : "";
-  const status = getDashboardStatus(key);
+  const key = typeof params?.key === "string" ? params.key.trim() : "";
 
-  if (status !== "authorized") {
-    return <AccessGate status={status} />;
+  if (!key) {
+    return <AccessGate status="missing" />;
   }
 
   try {

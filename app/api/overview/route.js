@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import {
   extractProvidedKey,
-  fetchDashboardSnapshot,
-  getDashboardStatus
+  fetchDashboardSnapshot
 } from "../../../lib/admin-data";
 
 export const runtime = "nodejs";
@@ -13,18 +12,10 @@ export async function GET(request) {
     request.nextUrl.searchParams,
     request.headers
   );
-  const status = getDashboardStatus(providedKey);
 
-  if (status === "unconfigured") {
+  if (!providedKey) {
     return NextResponse.json(
-      { ok: false, error: "Dashboard key is not configured." },
-      { status: 404 }
-    );
-  }
-
-  if (status !== "authorized") {
-    return NextResponse.json(
-      { ok: false, error: "Invalid dashboard key." },
+      { ok: false, error: "Dashboard key is required." },
       { status: 401 }
     );
   }
