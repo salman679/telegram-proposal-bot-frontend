@@ -49,6 +49,27 @@ function normalizeSnapshot(value) {
   const dueByStage = isRecord(followups.dueByStage) ? followups.dueByStage : {};
   const schedules = isRecord(snapshot.schedules) ? snapshot.schedules : {};
   const followupSchedule = isRecord(schedules.followups) ? schedules.followups : {};
+  const followupAnalytics = isRecord(followupSchedule.analytics)
+    ? followupSchedule.analytics
+    : {};
+  const followupDelivery = isRecord(followupAnalytics.delivery)
+    ? followupAnalytics.delivery
+    : {};
+  const followupFunnel = isRecord(followupAnalytics.funnel)
+    ? followupAnalytics.funnel
+    : {};
+  const followupRates = isRecord(followupAnalytics.rates)
+    ? followupAnalytics.rates
+    : {};
+  const followupStageMix = isRecord(followupAnalytics.stageMix)
+    ? followupAnalytics.stageMix
+    : {};
+  const followupSegmentMix = isRecord(followupAnalytics.segmentMix)
+    ? followupAnalytics.segmentMix
+    : {};
+  const followupSegments = isRecord(followupAnalytics.segments)
+    ? followupAnalytics.segments
+    : {};
   const dailyBroadcast = isRecord(schedules.dailyBroadcast)
     ? schedules.dailyBroadcast
     : {};
