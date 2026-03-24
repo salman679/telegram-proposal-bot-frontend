@@ -55,6 +55,21 @@ function normalizeSnapshot(value) {
   const currentBroadcast = isRecord(dailyBroadcast.current)
     ? dailyBroadcast.current
     : {};
+  const broadcastAnalytics = isRecord(dailyBroadcast.analytics)
+    ? dailyBroadcast.analytics
+    : {};
+  const broadcastDelivery = isRecord(broadcastAnalytics.delivery)
+    ? broadcastAnalytics.delivery
+    : {};
+  const broadcastFunnel = isRecord(broadcastAnalytics.funnel)
+    ? broadcastAnalytics.funnel
+    : {};
+  const broadcastRates = isRecord(broadcastAnalytics.rates)
+    ? broadcastAnalytics.rates
+    : {};
+  const broadcastSegments = isRecord(broadcastAnalytics.segments)
+    ? broadcastAnalytics.segments
+    : {};
   const environment = isRecord(snapshot.environment) ? snapshot.environment : {};
 
   return {
@@ -118,7 +133,67 @@ function normalizeSnapshot(value) {
         localTime: "-",
         path: "/api/cron/followups",
         batchLimit: 25,
-        ...followupSchedule
+        ...followupSchedule,
+        analytics: {
+          supported:
+            followupAnalytics.supported === undefined
+              ? true
+              : Boolean(followupAnalytics.supported),
+          available: Boolean(followupAnalytics.available),
+          isoDate: null,
+          startedAt: null,
+          openMetricLabel: "Opened (estimated)",
+          openMetricNote:
+            "Telegram bots do not expose exact read or open data. Opened is estimated from users who sent any message after the follow-up was delivered.",
+          note: null,
+          error: null,
+          ...followupAnalytics,
+          delivery: {
+            sent: 0,
+            failed: 0,
+            disabled: 0,
+            scheduled: 0,
+            ...followupDelivery
+          },
+          funnel: {
+            openedEstimateUsers: 0,
+            startedWorkUsers: 0,
+            startedWorkRequests: 0,
+            createdProposalUsers: 0,
+            createdProposalCount: 0,
+            ...followupFunnel
+          },
+          rates: {
+            openedEstimateRate: 0,
+            startedWorkRate: 0,
+            createdProposalRate: 0,
+            ...followupRates
+          },
+          stageMix: {
+            stage1: 0,
+            stage2: 0,
+            stage3: 0,
+            ...followupStageMix
+          },
+          segmentMix: {
+            onboarding: 0,
+            pendingContact: 0,
+            reactivation: 0,
+            ...followupSegmentMix
+          },
+          segments: {
+            fullContactUsers: 0,
+            noContactUsers: 0,
+            withAnyContactUsers: 0,
+            warmUsers: 0,
+            hotUsers: 0,
+            hadProposalHistoryUsers: 0,
+            firstTimeProposalUsers: 0,
+            startedAfterFollowupUsers: 0,
+            ...followupSegments
+          },
+          engagedUsers: asArray(followupAnalytics.engagedUsers)
+        }
       },
       dailyBroadcast: {
         cron: "-",
@@ -130,11 +205,71 @@ function normalizeSnapshot(value) {
           key: "Unavailable",
           index: 0,
           isoDate: "-",
+          slug: null,
           text: "No broadcast preview is available.",
           trackKey: null,
           trackLabel: null,
           keyword: null,
           ...currentBroadcast
+        },
+        analytics: {
+          supported:
+            broadcastAnalytics.supported === undefined
+              ? true
+              : Boolean(broadcastAnalytics.supported),
+          available: Boolean(broadcastAnalytics.available),
+          campaignKey: null,
+          startedAt: null,
+          completedAt: null,
+          trackKey: null,
+          trackLabel: null,
+          keyword: null,
+          isoDate: null,
+          slug: null,
+          index: 0,
+          note: null,
+          error: null,
+          openMetricLabel: "Opened (estimated)",
+          openMetricNote:
+            "Telegram bots do not expose exact read or open data. Opened is estimated from users who sent any message after delivery.",
+          ...broadcastAnalytics,
+          delivery: {
+            totalRecipients: 0,
+            sent: 0,
+            failed: 0,
+            sending: 0,
+            ...broadcastDelivery
+          },
+          funnel: {
+            openedEstimateUsers: 0,
+            ctaReplyUsers: 0,
+            ctaReplyCount: 0,
+            proposalUsers: 0,
+            proposalRequests: 0,
+            proposalSuccessUsers: 0,
+            proposalSuccesses: 0,
+            ...broadcastFunnel
+          },
+          rates: {
+            openedEstimateRate: 0,
+            ctaReplyRate: 0,
+            proposalUserRate: 0,
+            proposalRequestRate: 0,
+            proposalSuccessRate: 0,
+            ...broadcastRates
+          },
+          segments: {
+            fullContactUsers: 0,
+            noContactUsers: 0,
+            withAnyContactUsers: 0,
+            warmUsers: 0,
+            hotUsers: 0,
+            withProposalHistoryUsers: 0,
+            newToProposalUsers: 0,
+            repliedAndRequestedUsers: 0,
+            ...broadcastSegments
+          },
+          interestedUsers: asArray(broadcastAnalytics.interestedUsers)
         }
       }
     },
@@ -621,6 +756,34 @@ function buildSignalItems(users) {
       };
     });
 }
+function buildFollowupEngagedItems(users) {
+  return users.map((user) => {
+    const contact = getContactStatus(user);
+    const marketing = getMarketingStatus(user);
+    const activityLabel = user.createdProposal
+      ? "Created"
+      : user.startedWork
+        ? "Started"
+        : "Opened";
+    const activityTone = user.createdProposal
+      ? "success"
+      : user.startedWork
+        ? "warning"
+        : "info";
+
+    return {
+      id: `followup-${user.userId}`,
+      title: getUserLabel(user),
+      subtitle: `${activityLabel} after follow-up | ${formatDate(user.lastActivityAt || user.lastSeenAt)}`,
+      badges: [
+        { tone: contact.tone, label: contact.label },
+        marketing ? { tone: marketing.tone, label: marketing.label } : { tone: "muted", label: `Stage ${Number(user.followupStage || 0)}` },
+        { tone: activityTone, label: activityLabel }
+      ]
+    };
+  });
+}
+
 function OverviewView({
   snapshot,
   stats,
@@ -896,95 +1059,106 @@ function FollowupsView({ snapshot, totalUsers, recentUsers }) {
   const errors = Number(snapshot.overview.followups.errors || 0);
   const completedSequence = Number(snapshot.overview.followups.completedSequence || 0);
   const batchLimit = Number(snapshot.schedules.followups.batchLimit || 25);
+  const analytics = snapshot.schedules.followups.analytics;
+  const sent = Number(analytics.delivery.sent || 0);
+  const failed = Number(analytics.delivery.failed || 0);
+  const disabled = Number(analytics.delivery.disabled || 0);
+  const scheduled = Number(analytics.delivery.scheduled || 0);
+  const openedEstimateUsers = Number(analytics.funnel.openedEstimateUsers || 0);
+  const startedWorkUsers = Number(analytics.funnel.startedWorkUsers || 0);
+  const startedWorkRequests = Number(analytics.funnel.startedWorkRequests || 0);
+  const createdProposalUsers = Number(analytics.funnel.createdProposalUsers || 0);
+  const createdProposalCount = Number(analytics.funnel.createdProposalCount || 0);
+  const openLabel = analytics.openMetricLabel || "Opened (estimated)";
   const queueItems = buildQueueIssueItems(recentUsers);
-  const pendingItems = buildPendingContactItems(recentUsers);
+  const engagedItems = buildFollowupEngagedItems(asArray(analytics.engagedUsers));
+  const analyticsTone = analytics.error ? "warning" : sent > 0 ? "success" : "accent";
+  const analyticsStatusTone = analytics.error ? "warning" : analytics.available ? "success" : "muted";
+  const engagedTotal = Math.max(asArray(analytics.engagedUsers).length, 1);
+  const engagedRows = [
+    { label: "Full contact", value: Number(analytics.segments.fullContactUsers || 0), tone: "success" },
+    { label: "Any contact", value: Number(analytics.segments.withAnyContactUsers || 0), tone: "info" },
+    { label: "Warm", value: Number(analytics.segments.warmUsers || 0), tone: "warning" },
+    { label: "Hot", value: Number(analytics.segments.hotUsers || 0), tone: "danger" },
+    { label: "Had history", value: Number(analytics.segments.hadProposalHistoryUsers || 0), tone: "accent" },
+    { label: "Started work", value: Number(analytics.segments.startedAfterFollowupUsers || 0), tone: "success" }
+  ];
 
   return (
     <>
       <section className="hero-grid">
         <HeroPanel
-          eyebrow="Queue"
-          title="Reminder load"
-          value={formatNumber(dueNow)}
-          meta={`Batch ${formatNumber(batchLimit)} at ${snapshot.schedules.followups.localTime}`}
-          tone={errors > 0 ? "danger" : "warning"}
+          eyebrow="Follow-up analytics"
+          title="Latest sent follow-up"
+          value={formatNumber(sent)}
+          meta={analytics.isoDate ? `${analytics.isoDate} | ${snapshot.schedules.followups.localTime}` : `Batch ${formatNumber(batchLimit)} at ${snapshot.schedules.followups.localTime}`}
+          tone={analyticsTone}
         >
           <div className="hero-fact-grid">
-            <HeroFact label="Stage 0" value={formatNumber(stage0)} />
-            <HeroFact label="Stage 2" value={formatNumber(stage2)} />
-            <HeroFact label="Errors" value={formatNumber(errors)} />
+            <HeroFact label="Opened est." value={formatNumber(openedEstimateUsers)} />
+            <HeroFact label="Started work" value={formatNumber(startedWorkUsers)} />
+            <HeroFact label="Created" value={formatNumber(createdProposalUsers)} />
           </div>
         </HeroPanel>
 
         <div className="ring-grid">
           <RingMeter
-            label="Capacity"
-            value={getPercent(dueNow, Math.max(batchLimit, 1))}
-            note={`${formatNumber(dueNow)} / ${formatNumber(batchLimit)}`}
+            label={openLabel}
+            value={Number(analytics.rates.openedEstimateRate || 0)}
+            note={`${formatNumber(openedEstimateUsers)} users`}
+            tone="accent"
+            decimals={1}
+          />
+          <RingMeter
+            label="Started work"
+            value={Number(analytics.rates.startedWorkRate || 0)}
+            note={`${formatNumber(startedWorkUsers)} users`}
             tone="warning"
             decimals={1}
           />
           <RingMeter
-            label="Stage 2 risk"
-            value={getPercent(stage2, Math.max(dueNow, 1))}
-            note={`${formatNumber(stage2)} oldest`}
-            tone="danger"
-            decimals={1}
-          />
-          <RingMeter
-            label="Completed"
-            value={getPercent(completedSequence, totalUsers)}
-            note={`${formatNumber(completedSequence)} finished`}
+            label="Created proposal"
+            value={Number(analytics.rates.createdProposalRate || 0)}
+            note={`${formatNumber(createdProposalUsers)} users`}
             tone="success"
             decimals={1}
           />
         </div>
       </section>
 
-      <section className="action-grid">
-        <ActionCard
-          label="Due now"
-          value={formatNumber(dueNow)}
-          meta={dueNow > batchLimit ? "Needs extra runs" : "Ready to send"}
-          hint={dueNow > batchLimit ? "Backlog high" : "On schedule"}
-          tone={dueNow > batchLimit ? "warning" : "success"}
-        />
-        <ActionCard
-          label="Errors"
-          value={formatNumber(errors)}
-          meta={errors ? "Delivery issues" : "No failures"}
-          hint={errors ? "Check chats" : "Clear"}
-          tone={errors ? "danger" : "success"}
-        />
-        <ActionCard
-          label="Stage 2"
-          value={formatNumber(stage2)}
-          meta={stage2 ? "Oldest queue" : "No aged users"}
-          hint={stage2 ? "Final reminder" : "Clear"}
-          tone={stage2 ? "warning" : "muted"}
-        />
-        <ActionCard
-          label="Done"
-          value={formatNumber(completedSequence)}
-          meta="Finished flow"
-          hint="Completed"
-          tone="info"
-        />
-      </section>
-
       <section className="content-grid">
         <section className="panel">
-          <PanelHeader title="Stage spread" />
-          <div className="compact-stack">
-            <VisualBar label="Stage 0" value={stage0} total={Math.max(totalUsers, 1)} tone="accent" />
-            <VisualBar label="Stage 1" value={stage1} total={Math.max(totalUsers, 1)} tone="info" />
-            <VisualBar label="Stage 2" value={stage2} total={Math.max(totalUsers, 1)} tone="warning" />
-            <VisualBar label="Done" value={completedSequence} total={Math.max(totalUsers, 1)} tone="success" />
+          <PanelHeader
+            title="Latest follow-up result"
+            action={<TonePill tone={analyticsStatusTone}>{analytics.error ? "Check schema" : analytics.available ? "Tracked" : "Waiting"}</TonePill>}
+          />
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Sent" value={formatNumber(sent)} />
+            <MiniStat label="Failed" value={formatNumber(failed)} />
+            <MiniStat label="Disabled" value={formatNumber(disabled)} />
+            <MiniStat label="Scheduled" value={formatNumber(scheduled)} />
           </div>
+          <div className="divider" />
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Day 1" value={formatNumber(analytics.stageMix.stage1)} />
+            <MiniStat label="Day 3" value={formatNumber(analytics.stageMix.stage2)} />
+            <MiniStat label="Day 7" value={formatNumber(analytics.stageMix.stage3)} />
+            <MiniStat label="Requests" value={formatNumber(startedWorkRequests)} />
+          </div>
+          <div className="divider" />
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Onboarding" value={formatNumber(analytics.segmentMix.onboarding)} />
+            <MiniStat label="Pending" value={formatNumber(analytics.segmentMix.pendingContact)} />
+            <MiniStat label="Reactivation" value={formatNumber(analytics.segmentMix.reactivation)} />
+            <MiniStat label="Created" value={formatNumber(createdProposalCount)} />
+          </div>
+          {analytics.note ? <p className="user-subtle">{analytics.note}</p> : null}
+          {sent > 0 && analytics.openMetricNote && analytics.openMetricNote !== analytics.note ? <p className="user-subtle">{analytics.openMetricNote}</p> : null}
+          {analytics.error ? <p className="user-subtle">{analytics.error}</p> : null}
         </section>
 
         <section className="panel">
-          <PanelHeader title="Run window" />
+          <PanelHeader title="Queue health" />
           <div className="schedule-grid schedule-grid-single">
             <ScheduleCard
               label="Follow-up"
@@ -993,64 +1167,150 @@ function FollowupsView({ snapshot, totalUsers, recentUsers }) {
               tone="warning"
             />
           </div>
+          <div className="divider" />
           <div className="mini-stat-grid mini-stat-grid-tight">
             <MiniStat label="Due" value={formatNumber(dueNow)} />
             <MiniStat label="Batch" value={formatNumber(batchLimit)} />
             <MiniStat label="Errors" value={formatNumber(errors)} />
             <MiniStat label="Done" value={formatNumber(completedSequence)} />
           </div>
+          <div className="divider" />
+          <div className="compact-stack">
+            <VisualBar label="Stage 0 due" value={stage0} total={Math.max(totalUsers, 1)} tone="accent" />
+            <VisualBar label="Stage 1 due" value={stage1} total={Math.max(totalUsers, 1)} tone="info" />
+            <VisualBar label="Stage 2 due" value={stage2} total={Math.max(totalUsers, 1)} tone="warning" />
+            <VisualBar label="Completed" value={completedSequence} total={Math.max(totalUsers, 1)} tone="success" />
+          </div>
         </section>
       </section>
 
       <section className="content-grid">
+        <section className="panel">
+          <PanelHeader title="Follow-up funnel" />
+          {sent > 0 ? (
+            <>
+              <div className="compact-stack">
+                <VisualBar label="Sent" value={sent} total={Math.max(scheduled, sent, 1)} tone="accent" />
+                <VisualBar label={openLabel} value={openedEstimateUsers} total={Math.max(sent, 1)} tone="info" />
+                <VisualBar label="Started work users" value={startedWorkUsers} total={Math.max(sent, 1)} tone="warning" />
+                <VisualBar label="Created proposal users" value={createdProposalUsers} total={Math.max(sent, 1)} tone="success" />
+              </div>
+              <div className="divider" />
+              <div className="mini-stat-grid mini-stat-grid-wide">
+                <MiniStat label="Opened est." value={formatNumber(openedEstimateUsers)} />
+                <MiniStat label="Started requests" value={formatNumber(startedWorkRequests)} />
+                <MiniStat label="Created users" value={formatNumber(createdProposalUsers)} />
+                <MiniStat label="Created count" value={formatNumber(createdProposalCount)} />
+              </div>
+            </>
+          ) : (
+            <EmptyState label="No sent follow-up result is available yet" />
+          )}
+        </section>
+
+        <section className="panel">
+          <PanelHeader title="Who reacted after follow-up" action={<TonePill tone="info">{formatNumber(asArray(analytics.engagedUsers).length)}</TonePill>} />
+          {asArray(analytics.engagedUsers).length ? (
+            <>
+              <div className="compact-stack">
+                {engagedRows.map((item) => (
+                  <VisualBar
+                    key={item.label}
+                    label={item.label}
+                    value={item.value}
+                    total={engagedTotal}
+                    tone={item.tone}
+                  />
+                ))}
+              </div>
+              <div className="divider" />
+              <div className="mini-stat-grid mini-stat-grid-tight">
+                <MiniStat label="No contact" value={formatNumber(analytics.segments.noContactUsers)} />
+                <MiniStat label="First time" value={formatNumber(analytics.segments.firstTimeProposalUsers)} />
+                <MiniStat label="Warm" value={formatNumber(analytics.segments.warmUsers)} />
+                <MiniStat label="Hot" value={formatNumber(analytics.segments.hotUsers)} />
+              </div>
+            </>
+          ) : (
+            <EmptyState label="No post follow-up activity yet" />
+          )}
+        </section>
+      </section>
+
+      <section className="content-grid">
+        <FocusPanel title="Active after follow-up" items={engagedItems} emptyLabel="No users have interacted after follow-up yet" tone="info" />
         <FocusPanel title="Queue issues" items={queueItems} emptyLabel="No queue issues in recent users" tone="danger" />
-        <FocusPanel title="Pending contact" items={pendingItems} emptyLabel="No saved drafts waiting for contact" tone="warning" />
       </section>
     </>
   );
 }
 
-function BroadcastView({ snapshot, totalUsers, marketingTracks, stats, recentUsers }) {
-  const current = snapshot.schedules.dailyBroadcast.current;
-  const signalItems = buildSignalItems(recentUsers);
-  const interestedUsers = Number(snapshot.overview.marketing.totalInterested || 0);
+function BroadcastView({ snapshot, totalUsers }) {
+  const schedule = snapshot.schedules.dailyBroadcast;
+  const current = schedule.current;
+  const analytics = schedule.analytics;
+  const interestedUsers = asArray(analytics.interestedUsers);
+  const delivered = Number(analytics.delivery.sent || 0);
+  const totalRecipients = Number(analytics.delivery.totalRecipients || delivered || totalUsers || 0);
+  const failed = Number(analytics.delivery.failed || 0);
+  const openedEstimateUsers = Number(analytics.funnel.openedEstimateUsers || 0);
+  const ctaReplyUsers = Number(analytics.funnel.ctaReplyUsers || 0);
+  const ctaReplyCount = Number(analytics.funnel.ctaReplyCount || 0);
+  const proposalUsers = Number(analytics.funnel.proposalUsers || 0);
+  const proposalRequests = Number(analytics.funnel.proposalRequests || 0);
+  const proposalSuccessUsers = Number(analytics.funnel.proposalSuccessUsers || 0);
+  const proposalSuccesses = Number(analytics.funnel.proposalSuccesses || 0);
+  const openLabel = analytics.openMetricLabel || "Opened (estimated)";
+  const latestTrackLabel = analytics.trackLabel || current.trackLabel || "-";
+  const interestedItems = buildInterestedProfileItems(interestedUsers);
+  const latestTone = analytics.error ? "warning" : delivered > 0 ? "success" : "accent";
+  const latestStatusTone = analytics.error ? "warning" : analytics.available ? "success" : "muted";
+  const segmentTotal = Math.max(interestedUsers.length, 1);
+  const segmentRows = [
+    { label: "Full contact", value: Number(analytics.segments.fullContactUsers || 0), tone: "success" },
+    { label: "Any contact", value: Number(analytics.segments.withAnyContactUsers || 0), tone: "info" },
+    { label: "Warm", value: Number(analytics.segments.warmUsers || 0), tone: "warning" },
+    { label: "Hot", value: Number(analytics.segments.hotUsers || 0), tone: "danger" },
+    { label: "Had proposal history", value: Number(analytics.segments.withProposalHistoryUsers || 0), tone: "accent" },
+    { label: "Replied and requested", value: Number(analytics.segments.repliedAndRequestedUsers || 0), tone: "success" }
+  ];
 
   return (
     <>
       <section className="hero-grid">
         <HeroPanel
-          eyebrow="Broadcast"
-          title="Daily tips"
-          value={snapshot.schedules.dailyBroadcast.localTime}
-          meta={current.isoDate}
-          tone="accent"
+          eyebrow="Broadcast analytics"
+          title="Latest sent tip"
+          value={formatNumber(delivered)}
+          meta={analytics.campaignKey ? `${analytics.campaignKey} | ${formatDate(analytics.startedAt)}` : `${schedule.localTime} send window`}
+          tone={latestTone}
         >
           <div className="hero-fact-grid">
-            <HeroFact label="Template" value={formatNumber(current.index)} />
-            <HeroFact label="Keyword" value={current.keyword || "-"} />
-            <HeroFact label="Audience" value={formatNumber(totalUsers)} />
+            <HeroFact label="Opened est." value={formatNumber(openedEstimateUsers)} />
+            <HeroFact label="CTA replies" value={formatNumber(ctaReplyUsers)} />
+            <HeroFact label="Proposal users" value={formatNumber(proposalUsers)} />
           </div>
         </HeroPanel>
 
         <div className="ring-grid">
           <RingMeter
-            label="Template progress"
-            value={getPercent(current.index, Math.max(snapshot.schedules.dailyBroadcast.templateCount, 1))}
-            note={`${formatNumber(current.index)} / ${formatNumber(snapshot.schedules.dailyBroadcast.templateCount)}`}
+            label={openLabel}
+            value={Number(analytics.rates.openedEstimateRate || 0)}
+            note={`${formatNumber(openedEstimateUsers)} users`}
             tone="accent"
             decimals={1}
           />
           <RingMeter
-            label="Interested"
-            value={getPercent(interestedUsers, totalUsers)}
-            note={`${formatNumber(interestedUsers)} replied`}
+            label="CTA replies"
+            value={Number(analytics.rates.ctaReplyRate || 0)}
+            note={`${formatNumber(ctaReplyUsers)} users`}
             tone="info"
             decimals={1}
           />
           <RingMeter
-            label="Weekly active"
-            value={getPercent(stats.activeUsers.last7Days, totalUsers)}
-            note={`${formatNumber(stats.activeUsers.last7Days)} active in 7d`}
+            label="Proposal users"
+            value={Number(analytics.rates.proposalUserRate || 0)}
+            note={`${formatNumber(proposalUsers)} users`}
             tone="success"
             decimals={1}
           />
@@ -1059,48 +1319,133 @@ function BroadcastView({ snapshot, totalUsers, marketingTracks, stats, recentUse
 
       <section className="content-grid content-grid-main">
         <section className="panel panel-large">
-          <PanelHeader title="Today's message" action={<TonePill tone="muted">{current.key}</TonePill>} />
+          <PanelHeader title="Today's tip copy" action={<TonePill tone="muted">{current.key}</TonePill>} />
           <div className="message-preview">{current.text}</div>
+          <div className="divider" />
+          <div className="mini-stat-grid mini-stat-grid-wide">
+            <MiniStat label="Template" value={formatNumber(current.index)} />
+            <MiniStat label="Track" value={current.trackLabel || "-"} />
+            <MiniStat label="Keyword" value={current.keyword || "-"} />
+            <MiniStat label="Audience" value={formatNumber(totalUsers)} />
+          </div>
         </section>
 
         <section className="panel">
-          <PanelHeader title="Signal mix" />
-          <div className="compact-stack">
-            {marketingTracks.length ? (
-              marketingTracks.map((item) => (
-                <VisualBar
-                  key={item.trackKey}
-                  label={item.label}
-                  value={item.count}
-                  total={Math.max(totalUsers, 1)}
-                  tone="info"
-                />
-              ))
-            ) : (
-              <EmptyState label="No CTA replies" />
-            )}
+          <PanelHeader
+            title="Latest campaign result"
+            action={<TonePill tone={latestStatusTone}>{analytics.error ? "Check schema" : analytics.available ? "Tracked" : "Waiting"}</TonePill>}
+          />
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Delivered" value={formatNumber(delivered)} />
+            <MiniStat label="Failed" value={formatNumber(failed)} />
+            <MiniStat label="Reply count" value={formatNumber(ctaReplyCount)} />
+            <MiniStat label="Created" value={formatNumber(proposalSuccesses)} />
           </div>
           <div className="divider" />
           <div className="schedule-grid schedule-grid-single">
             <ScheduleCard
-              label="Send"
-              time={snapshot.schedules.dailyBroadcast.localTime}
-              meta={snapshot.schedules.dailyBroadcast.cron}
+              label="Daily send"
+              time={schedule.localTime}
+              meta={schedule.cron}
               tone="accent"
             />
           </div>
+          <div className="divider" />
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Track" value={latestTrackLabel} />
+            <MiniStat label="Keyword" value={analytics.keyword || current.keyword || "-"} />
+            <MiniStat label="Template" value={formatNumber(analytics.index || current.index)} />
+            <MiniStat label="Started" value={formatDate(analytics.startedAt)} />
+          </div>
+          {analytics.note ? <p className="user-subtle">{analytics.note}</p> : null}
+          {delivered > 0 && analytics.openMetricNote && analytics.openMetricNote !== analytics.note ? <p className="user-subtle">{analytics.openMetricNote}</p> : null}
+          {analytics.error ? <p className="user-subtle">{analytics.error}</p> : null}
         </section>
       </section>
 
       <section className="content-grid">
-        <FocusPanel title="Recent signal users" items={signalItems} emptyLabel="No recent campaign replies" tone="info" />
         <section className="panel">
-          <PanelHeader title="Broadcast stats" />
-          <div className="mini-stat-grid mini-stat-grid-wide">
-            <MiniStat label="Templates" value={formatNumber(snapshot.schedules.dailyBroadcast.templateCount)} />
-            <MiniStat label="Current" value={formatNumber(current.index)} />
-            <MiniStat label="Interested" value={formatNumber(interestedUsers)} />
-            <MiniStat label="Hot leads" value={formatNumber(snapshot.overview.marketing.hotLeads)} />
+          <PanelHeader title="Delivery to proposal funnel" />
+          {delivered > 0 ? (
+            <>
+              <div className="compact-stack">
+                <VisualBar label="Delivered" value={delivered} total={Math.max(totalRecipients, 1)} tone="accent" />
+                <VisualBar label={openLabel} value={openedEstimateUsers} total={Math.max(delivered, 1)} tone="info" />
+                <VisualBar label="CTA reply users" value={ctaReplyUsers} total={Math.max(delivered, 1)} tone="warning" />
+                <VisualBar label="Proposal users" value={proposalUsers} total={Math.max(delivered, 1)} tone="success" />
+                <VisualBar label="Proposal created users" value={proposalSuccessUsers} total={Math.max(delivered, 1)} tone="accent" />
+              </div>
+              <div className="divider" />
+              <div className="mini-stat-grid mini-stat-grid-wide">
+                <MiniStat label="Recipients" value={formatNumber(totalRecipients)} />
+                <MiniStat label="Reply count" value={formatNumber(ctaReplyCount)} />
+                <MiniStat label="Proposal requests" value={formatNumber(proposalRequests)} />
+                <MiniStat label="Proposals created" value={formatNumber(proposalSuccesses)} />
+              </div>
+            </>
+          ) : (
+            <EmptyState label="No sent daily tip has been tracked yet" />
+          )}
+        </section>
+
+        <section className="panel">
+          <PanelHeader title="Who looks interested" action={<TonePill tone="info">{formatNumber(interestedUsers.length)}</TonePill>} />
+          {interestedUsers.length ? (
+            <>
+              <div className="compact-stack">
+                {segmentRows.map((item) => (
+                  <VisualBar
+                    key={item.label}
+                    label={item.label}
+                    value={item.value}
+                    total={segmentTotal}
+                    tone={item.tone}
+                  />
+                ))}
+              </div>
+              <div className="divider" />
+              <div className="mini-stat-grid mini-stat-grid-tight">
+                <MiniStat label="No contact" value={formatNumber(analytics.segments.noContactUsers)} />
+                <MiniStat label="New to proposal" value={formatNumber(analytics.segments.newToProposalUsers)} />
+                <MiniStat label="Warm" value={formatNumber(analytics.segments.warmUsers)} />
+                <MiniStat label="Hot" value={formatNumber(analytics.segments.hotUsers)} />
+              </div>
+            </>
+          ) : (
+            <EmptyState label="No CTA replies tracked yet" />
+          )}
+        </section>
+      </section>
+
+      <section className="content-grid">
+        <FocusPanel
+          title="Interested users"
+          items={interestedItems}
+          emptyLabel="No interested users yet"
+          tone="info"
+        />
+        <section className="panel">
+          <PanelHeader title="Campaign context" />
+          <div className="mini-stat-grid mini-stat-grid-tight">
+            <MiniStat label="Template pool" value={formatNumber(schedule.templateCount)} />
+            <MiniStat label="Current tip" value={formatNumber(current.index)} />
+            <MiniStat label="Latest tracked" value={formatNumber(analytics.index || 0)} />
+            <MiniStat label="Current track" value={current.trackLabel || "-"} />
+          </div>
+          <div className="divider" />
+          <div className="compact-stack">
+            <VisualBar
+              label="Template progress"
+              value={Number(current.index || 0)}
+              total={Math.max(Number(schedule.templateCount || 0), 1)}
+              tone="accent"
+            />
+            <VisualBar
+              label="Interested people"
+              value={interestedUsers.length}
+              total={Math.max(delivered, 1)}
+              tone="info"
+            />
           </div>
         </section>
       </section>
@@ -1182,7 +1527,7 @@ export default function DashboardClient({ initialSnapshot, apiPath }) {
     overview: formatNumber(totalUsers),
     audience: formatNumber(recentUsers.length),
     followups: formatNumber(followupDue),
-    broadcast: formatNumber(interestedUsers)
+    broadcast: formatNumber(snapshot.schedules.dailyBroadcast.analytics.funnel.ctaReplyUsers || interestedUsers)
   };
 
   useEffect(() => {
