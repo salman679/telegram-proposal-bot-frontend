@@ -317,9 +317,13 @@ function formatDate(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat("en-GB", {
-      dateStyle: "medium",
-      timeStyle: "short",
+    return new Intl.DateTimeFormat("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
       timeZone: DASHBOARD_TIME_ZONE
     }).format(new Date(value));
   } catch {
@@ -773,6 +777,33 @@ function buildSignalItems(users) {
         badges: [
           marketing ? { tone: marketing.tone, label: marketing.label } : { tone: "muted", label: "Signal" },
           { tone: "muted", label: formatDate(user.lastSeenAt) }
+        ]
+      };
+    });
+}
+function buildInterestedProfileItems(users) {
+  return users
+    .sort((left, right) => {
+      const signalGap = Number(right.marketingSignalCount || 0) - Number(left.marketingSignalCount || 0);
+      if (signalGap !== 0) {
+        return signalGap;
+      }
+
+      return Number(right.proposalRequests || 0) - Number(left.proposalRequests || 0);
+    })
+    .map((user) => {
+      const contact = getContactStatus(user);
+      const marketing = getMarketingStatus(user);
+      const trackLabel = MARKETING_TRACK_LABELS[user.marketingTrack] || user.marketingTrack || "Interest";
+
+      return {
+        id: `interest-${user.userId}`,
+        title: getUserLabel(user),
+        subtitle: `${trackLabel} | ${formatNumber(user.marketingSignalCount)} replies`,
+        badges: [
+          marketing ? { tone: marketing.tone, label: marketing.label } : { tone: "muted", label: trackLabel },
+          { tone: contact.tone, label: contact.label },
+          { tone: "muted", label: formatDate(user.lastSignalAt || user.lastSeenAt) }
         ]
       };
     });
