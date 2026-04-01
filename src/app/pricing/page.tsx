@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PricingPage } from "@/features/website/pages/pricing/pricing-page";
+import { PricingPage } from "@/features/website/pages/pricing/page";
 
 export const metadata: Metadata = {
   title: "Pricing - Upwork Bot BD",

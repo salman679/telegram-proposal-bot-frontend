@@ -1,4 +1,4 @@
-import { AdminDashboard } from "@/features/admin/components/dashboard/admin-dashboard";
+import { AdminDashboard } from "@/features/admin/components/dashboard/dashboard";
 import { getDashboardPayload } from "@/features/admin/lib/dashboard";
 
 export const dynamic = "force-dynamic";

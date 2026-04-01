@@ -22,7 +22,7 @@ import type {
   TrackCountRow
 } from "@/features/admin/lib/dashboard";
 
-import styles from "./admin-dashboard.module.css";
+import styles from "./dashboard.module.css";
 
 interface AdminDashboardProps {
   payload: DashboardPayload;

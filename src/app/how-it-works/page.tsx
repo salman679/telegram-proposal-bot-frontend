@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { HowItWorksPage } from "@/features/website/pages/how-it-works/how-it-works-page";
+import { HowItWorksPage } from "@/features/website/pages/how-it-works/page";
 
 export const metadata: Metadata = {
   title: "কিভাবে কাজ করে - Upwork Bot BD",

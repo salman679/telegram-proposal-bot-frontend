@@ -3,27 +3,24 @@ import Link from "next/link";
 import {
   SITE_NAME,
   TELEGRAM_BOT_URL,
-  type WebsiteActivePage
+  type ActivePage
 } from "@/features/website/config/site";
 
-import styles from "./website-header.module.css";
+import styles from "./header.module.css";
 
-interface WebsiteHeaderProps {
-  activePage?: WebsiteActivePage;
+interface HeaderProps {
+  activePage?: ActivePage;
   benefitsHref: string;
 }
 
 function getNavClassName(
-  activePage: WebsiteActivePage | undefined,
-  currentPage: WebsiteActivePage
+  activePage: ActivePage | undefined,
+  currentPage: ActivePage
 ) {
   return activePage === currentPage ? styles.navActive : undefined;
 }
 
-export function WebsiteHeader({
-  activePage,
-  benefitsHref
-}: WebsiteHeaderProps) {
+export function Header({ activePage, benefitsHref }: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>{SITE_NAME}</div>

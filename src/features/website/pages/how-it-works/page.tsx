@@ -11,11 +11,11 @@ import {
   Trophy
 } from "lucide-react";
 
-import { WebsiteHeader } from "@/features/website/components/website-header";
-import { WebsiteMinimalFooter } from "@/features/website/components/website-minimal-footer";
+import { Header } from "@/features/website/components/header";
+import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
 
-import styles from "./how-it-works-page.module.css";
+import styles from "./page.module.css";
 
 const steps = [
   {
@@ -56,7 +56,7 @@ export function HowItWorksPage() {
       <div className={styles.bgGlowPrimary} />
       <div className={styles.bgGlowSecondary} />
 
-      <WebsiteHeader activePage="how-it-works" benefitsHref="/#benefits" />
+      <Header activePage="how-it-works" benefitsHref="/#benefits" />
 
       <section className={styles.heroSection}>
         <span className={styles.heroBadge}>The Future of Bidding</span>
@@ -206,7 +206,7 @@ export function HowItWorksPage() {
         </div>
       </section>
 
-      <WebsiteMinimalFooter
+      <MinimalFooter
         links={[
           { href: "/pricing", label: "Pricing" },
           { href: "/admin/login", label: "Admin Login" },

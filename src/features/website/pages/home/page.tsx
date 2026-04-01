@@ -16,10 +16,10 @@ import {
   Zap
 } from "lucide-react";
 
-import { WebsiteHeader } from "@/features/website/components/website-header";
+import { Header } from "@/features/website/components/header";
 import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
 
-import styles from "./home-page.module.css";
+import styles from "./page.module.css";
 
 const socialProofAvatars = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBhiDwVbgXBL9VH-6pYT3skk1vk1MOGb9OyV-B5ggtBnUJx23stk5fAIB_VuQhCNtgUt8YwRYlr_lsmfKm977T4kluMUUg-tFZgmzc_MS8wxHz_HZ96PtI7F1NzgHqQAX0sY_4KDGQrcEe1af9PujsgSMqbwK_TUXkgm7_S0ooUiqunKXgIZdWmXDsZZIjNc0w7gzxETlH0SdD7krpOfyWERRSOEXAE8vIkmCoVMv7BML9o0tbDz6XpuzpdOmoIUMn8WcecqC2te9g",
@@ -138,13 +138,13 @@ const articles = [
   }
 ];
 
-export function LandingPage() {
+export function HomePage() {
   return (
     <main className={styles.page}>
       <div className={styles.bgGlowPrimary} />
       <div className={styles.bgGlowSecondary} />
 
-      <WebsiteHeader benefitsHref="/#benefits" />
+      <Header benefitsHref="/#benefits" />
 
       <section className={styles.heroSection}>
         <div className={styles.heroCopy}>

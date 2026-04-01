@@ -1,20 +1,18 @@
 import Link from "next/link";
 
-import styles from "./website-minimal-footer.module.css";
+import styles from "./minimal-footer.module.css";
 
-interface WebsiteMinimalFooterLink {
+interface MinimalFooterLink {
   href: string;
   label: string;
   external?: boolean;
 }
 
-interface WebsiteMinimalFooterProps {
-  links: WebsiteMinimalFooterLink[];
+interface MinimalFooterProps {
+  links: MinimalFooterLink[];
 }
 
-export function WebsiteMinimalFooter({
-  links
-}: WebsiteMinimalFooterProps) {
+export function MinimalFooter({ links }: MinimalFooterProps) {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerInner}>

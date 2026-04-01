@@ -1,5 +1,5 @@
-import { LandingPage } from "@/features/website/pages/home/home-page";
+import { HomePage } from "@/features/website/pages/home/page";
 
 export default function HomeRoutePage() {
-  return <LandingPage />;
+  return <HomePage />;
 }

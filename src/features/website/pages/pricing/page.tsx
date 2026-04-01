@@ -5,11 +5,11 @@ import {
   Sparkles
 } from "lucide-react";
 
-import { WebsiteHeader } from "@/features/website/components/website-header";
-import { WebsiteMinimalFooter } from "@/features/website/components/website-minimal-footer";
+import { Header } from "@/features/website/components/header";
+import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
 
-import styles from "./pricing-page.module.css";
+import styles from "./page.module.css";
 
 const pricingPlans = [
   {
@@ -83,7 +83,7 @@ export function PricingPage() {
       <div className={styles.bgGlowPrimary} />
       <div className={styles.bgGlowSecondary} />
 
-      <WebsiteHeader activePage="pricing" benefitsHref="/#benefits" />
+      <Header activePage="pricing" benefitsHref="/#benefits" />
 
       <section className={styles.heroSection}>
         <div className={styles.heroBadge}>
@@ -182,7 +182,7 @@ export function PricingPage() {
         </article>
       </section>
 
-      <WebsiteMinimalFooter
+      <MinimalFooter
         links={[
           { href: "/", label: "Home" },
           { href: "/admin/login", label: "Admin Login" },
