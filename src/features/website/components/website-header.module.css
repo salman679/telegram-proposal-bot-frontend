@@ -1,0 +1,124 @@
+.header {
+  position: sticky;
+  top: 18px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 18px;
+  border-radius: 999px;
+  background: var(--glass-white);
+  backdrop-filter: blur(24px);
+  box-shadow: var(--shadow-soft);
+}
+
+.logo {
+  font-family: var(--font-display), var(--font-bangla), sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nav,
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav {
+  gap: 24px;
+  color: var(--muted);
+}
+
+.nav a:hover,
+.loginLink:hover {
+  color: var(--primary);
+}
+
+.navActive {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.loginLink {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  color: #f4f1ff;
+  background: var(--gradient-primary);
+  box-shadow: 0 16px 36px rgba(74, 64, 224, 0.18);
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .header {
+    top: 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    border-radius: 30px;
+  }
+
+  .nav,
+  .headerActions {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 780px) {
+  .header {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 32px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .headerActions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 10px;
+  }
+
+  .loginLink {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--surface-low);
+  }
+
+  .primaryButton {
+    min-height: 48px;
+    padding: 12px 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .headerActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
