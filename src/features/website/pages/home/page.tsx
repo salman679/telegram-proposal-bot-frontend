@@ -16,7 +16,7 @@ import {
   Zap
 } from "lucide-react";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import {
   SITE_CONTAINER_CLASS,
@@ -188,13 +188,13 @@ export function HomePage() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-4">
-            <WebsiteButton href={TELEGRAM_BOT_URL} external variant="primary">
+            <Button href={TELEGRAM_BOT_URL} external variant="primary">
               Telegram-এ শুরু করুন
               <Rocket size={18} />
-            </WebsiteButton>
-            <WebsiteButton href="/how-it-works" variant="secondary">
+            </Button>
+            <Button href="/how-it-works" variant="secondary">
               লাইভ ডেমো দেখুন
-            </WebsiteButton>
+            </Button>
           </div>
 
           <div className="mt-[22px] flex flex-wrap items-center gap-4">
@@ -331,9 +331,9 @@ export function HomePage() {
             আপডেট এবং practical bidding tip মিস করবেন না।
           </p>
         </div>
-        <WebsiteButton href={TELEGRAM_BOT_URL} external variant="inverted">
+        <Button href={TELEGRAM_BOT_URL} external variant="inverted">
           Open Telegram Bot
-        </WebsiteButton>
+        </Button>
       </section>
 
       <section
@@ -387,13 +387,13 @@ export function HomePage() {
                 ))}
               </ul>
 
-              <WebsiteButton
+              <Button
                 href={TELEGRAM_BOT_URL}
                 external
                 variant={plan.featured ? "primary" : "secondary"}
               >
                 {plan.cta}
-              </WebsiteButton>
+              </Button>
             </article>
           ))}
         </div>
@@ -503,9 +503,9 @@ export function HomePage() {
                 placeholder="Email"
                 className="w-full rounded-2xl border border-transparent bg-[var(--surface-highest)] px-4 py-[14px] text-[var(--ink)] outline-none focus:border-[rgba(74,64,224,0.4)] focus:shadow-[0_0_0_6px_rgba(136,133,255,0.18)]"
               />
-              <WebsiteButton type="button" variant="primary">
+              <Button type="button" variant="primary">
                 Join
-              </WebsiteButton>
+              </Button>
             </div>
           </div>
         </div>

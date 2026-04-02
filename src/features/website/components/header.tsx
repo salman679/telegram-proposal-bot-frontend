@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import {
   SITE_CONTAINER_CLASS,
   SITE_NAME,
@@ -54,7 +54,7 @@ export function Header({ activePage, benefitsHref }: HeaderProps) {
       </nav>
 
       <div className="flex shrink-0 items-center gap-4">
-        <WebsiteButton
+        <Button
           href={TELEGRAM_BOT_URL}
           external
           variant="primary"
@@ -62,7 +62,7 @@ export function Header({ activePage, benefitsHref }: HeaderProps) {
           className="px-[24px] max-[780px]:min-h-[40px] max-[780px]:px-[16px] max-[780px]:text-[0.84rem]"
         >
           Get Started
-        </WebsiteButton>
+        </Button>
       </div>
     </header>
   );

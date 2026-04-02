@@ -7,7 +7,7 @@ import { SITE_NAME, SITE_URL } from "@/features/website/config/site";
 import {
   DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
-  getWebsiteSchemas
+  getSiteSchemas
 } from "@/features/website/lib/seo";
 
 const displayFont = Manrope({
@@ -86,7 +86,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <StructuredData data={getWebsiteSchemas()} />
+        <StructuredData data={getSiteSchemas()} />
         {children}
       </body>
     </html>

@@ -103,7 +103,7 @@ export function buildPageMetadata({
   };
 }
 
-export function getWebsiteSchemas() {
+export function getSiteSchemas() {
   return [
     {
       "@context": "https://schema.org",

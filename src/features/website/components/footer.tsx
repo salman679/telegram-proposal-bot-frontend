@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Globe, Mail, Sparkles } from "lucide-react";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import {
   SITE_CONTAINER_CLASS,
   SITE_NAME,
@@ -33,7 +33,7 @@ export function Footer() {
             © 2026 Upwork Bot BD. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <WebsiteButton
+            <Button
               href={TELEGRAM_BOT_URL}
               external
               variant="inverted"
@@ -42,8 +42,8 @@ export function Footer() {
               className="h-[38px] w-[38px] min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)]"
             >
               <Mail size={18} />
-            </WebsiteButton>
-            <WebsiteButton
+            </Button>
+            <Button
               href={TELEGRAM_BOT_URL}
               external
               variant="inverted"
@@ -52,7 +52,7 @@ export function Footer() {
               className="h-[38px] w-[38px] min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)]"
             >
               <Sparkles size={18} />
-            </WebsiteButton>
+            </Button>
           </div>
         </div>
 

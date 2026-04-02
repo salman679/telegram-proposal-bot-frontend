@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MoveLeft, Send, TrendingUp } from "lucide-react";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
 import {
@@ -162,7 +162,7 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                 প্রতিদিন ফ্রিল্যান্সিং টিপস, নতুন জব আপডেট, আর প্রপোজাল স্ট্র্যাটেজি
                 পেতে এখনই জয়েন করুন।
               </p>
-              <WebsiteButton
+              <Button
                 href={TELEGRAM_BOT_URL}
                 external
                 variant="inverted"
@@ -172,7 +172,7 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
               >
                 <Send size={16} />
                 টেলিগ্রামে যুক্ত হোন
-              </WebsiteButton>
+              </Button>
             </div>
           </section>
 
@@ -213,13 +213,13 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
           </section>
 
           <div className="flex">
-            <WebsiteButton
+            <Button
               href="/blog"
               variant="secondary"
             >
               <MoveLeft size={18} />
               সব আর্টিকেলে ফিরে যান
-            </WebsiteButton>
+            </Button>
           </div>
         </aside>
       </div>

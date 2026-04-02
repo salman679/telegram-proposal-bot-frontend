@@ -7,7 +7,7 @@ import {
   ADMIN_PASSWORD,
   sanitizeAdminRedirect
 } from "@/features/admin/lib/auth";
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import { buildPageMetadata } from "@/features/website/lib/seo";
 
 type SearchParams = Promise<{
@@ -122,9 +122,9 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
             </p>
           ) : null}
 
-          <WebsiteButton type="submit" variant="primary" className="cursor-pointer">
+          <Button type="submit" variant="primary" className="cursor-pointer">
             Enter dashboard
-          </WebsiteButton>
+          </Button>
 
           <p className="text-[0.86rem] leading-[1.6] text-[var(--muted)]">
             This login is intentionally hardcoded for now, so replace it before

@@ -10,7 +10,7 @@ import {
   Trophy
 } from "lucide-react";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import {
@@ -78,7 +78,7 @@ export function HowItWorksPage() {
 
       <Header activePage="how-it-works" benefitsHref="/#benefits" />
 
-      <section className={`${siteWidthClass} pb-8 pt-28 text-center max-[780px]:pt-[84px]`}>
+      <section className={`${siteWidthClass} flex flex-col items-center pb-8 pt-28 text-center max-[780px]:pt-[84px]`}>
         <span className="inline-block rounded-full bg-[rgba(220,201,255,0.7)] px-[14px] py-2 text-[0.76rem] font-extrabold uppercase tracking-[0.14em] text-[var(--primary)]">
           The Future of Bidding
         </span>
@@ -86,7 +86,7 @@ export function HowItWorksPage() {
           সহজ ৩টি ধাপে <br />
           <span className="text-[var(--primary)]">বিজয়ী প্রপোজাল</span> লিখুন
         </h1>
-        <p className="mx-auto mt-5 max-w-[780px] text-[1.05rem] leading-[1.8] text-[var(--muted)]">
+        <p className="mx-auto mt-5 max-w-[660px] text-center text-[1.05rem] leading-[1.8] text-[var(--muted)]">
           আপওয়ার্ক বিড বিডি-র শক্তিশালী AI ব্যবহার করে কয়েক সেকেন্ডের মধ্যে
           প্রফেশনাল প্রপোজাল তৈরি করুন এবং আপনার ফ্রিল্যান্সিং ক্যারিয়ারকে নিয়ে
           যান নতুন উচ্চতায়।
@@ -229,7 +229,7 @@ export function HowItWorksPage() {
             <p className="font-bold text-[rgba(237,240,255,0.82)]">
               আজকের টিপস মিস করবেন না!
             </p>
-            <WebsiteButton
+            <Button
               href={TELEGRAM_BOT_URL}
               external
               variant="inverted"
@@ -238,7 +238,7 @@ export function HowItWorksPage() {
               aria-label="নোটিফিকেশন অন করুন"
             >
               নোটিফিকেশন অন করুন
-            </WebsiteButton>
+            </Button>
           </div>
         </div>
       </section>
@@ -249,21 +249,21 @@ export function HowItWorksPage() {
             আপনি কি প্রস্তুত আপনার ফ্রিল্যান্সিং সফর শুরু করতে?
           </h2>
           <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <WebsiteButton
+            <Button
               href={TELEGRAM_BOT_URL}
               external
               variant="primary"
               className="min-w-[220px] max-[640px]:w-full"
             >
               এখনই শুরু করুন - ফ্রি
-            </WebsiteButton>
-            <WebsiteButton
+            </Button>
+            <Button
               href="/admin/login"
               variant="secondary"
               className="min-w-[220px] max-[640px]:w-full"
             >
               Bangla Support
-            </WebsiteButton>
+            </Button>
           </div>
         </div>
       </section>

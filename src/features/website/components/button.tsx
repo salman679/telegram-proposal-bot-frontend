@@ -8,7 +8,7 @@ import type {
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "inverted";
 export type ButtonSize = "sm" | "md" | "lg";
 
-interface WebsiteButtonStyleProps {
+interface ButtonStyleProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
@@ -35,12 +35,12 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-white !text-[#4a40e0] visited:!text-[#4a40e0] hover:bg-[#f6f5ff] hover:!text-[#4a40e0] focus:!text-[#4a40e0] [&_svg]:!text-[#4a40e0] shadow-[0_12px_24px_rgba(11,16,32,0.12)] ring-1 ring-[rgba(74,64,224,0.08)]"
 };
 
-export function websiteButtonClass({
+export function buttonClass({
   variant = "primary",
   size = "md",
   fullWidth = false,
   className
-}: WebsiteButtonStyleProps = {}) {
+}: ButtonStyleProps = {}) {
   return [
     baseClass,
     sizeClasses[size],
@@ -52,34 +52,41 @@ export function websiteButtonClass({
     .join(" ");
 }
 
-type WebsiteButtonLinkProps = PropsWithChildren<
-  WebsiteButtonStyleProps &
-    Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "className" | "children"> & {
+type ButtonLinkProps = PropsWithChildren<
+  ButtonStyleProps &
+    Omit<
+      AnchorHTMLAttributes<HTMLAnchorElement>,
+      "className" | "children" | "type"
+    > & {
       href: string;
       external?: boolean;
     }
 >;
 
-type WebsiteButtonNativeProps = PropsWithChildren<
-  WebsiteButtonStyleProps &
+type ButtonNativeProps = PropsWithChildren<
+  ButtonStyleProps &
     Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> & {
       href?: undefined;
       external?: never;
     }
 >;
 
-export function WebsiteButton(
-  props: WebsiteButtonLinkProps | WebsiteButtonNativeProps
+function isLinkProps(props: ButtonLinkProps | ButtonNativeProps): props is ButtonLinkProps {
+  return "href" in props && typeof props.href === "string";
+}
+
+export function Button(
+  props: ButtonLinkProps | ButtonNativeProps
 ) {
   const { variant, size, fullWidth, className, children } = props;
-  const resolvedClassName = websiteButtonClass({
+  const resolvedClassName = buttonClass({
     variant,
     size,
     fullWidth,
     className
   });
 
-  if ("href" in props && props.href) {
+  if (isLinkProps(props)) {
     const { href, external, ...restProps } = props;
     const isExternal = external || /^(https?:)?\/\//.test(href);
 
@@ -98,10 +105,12 @@ export function WebsiteButton(
     );
   }
 
-  const { type = "button", ...restProps } = props;
+  const { type, ...restProps } = props;
+  const buttonType: ButtonHTMLAttributes<HTMLButtonElement>["type"] =
+    type ?? "button";
 
   return (
-    <button type={type} className={resolvedClassName} {...restProps}>
+    <button type={buttonType} className={resolvedClassName} {...restProps}>
       {children}
     </button>
   );

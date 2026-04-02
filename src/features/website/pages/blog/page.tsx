@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Mail, MoveRight } from "lucide-react";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
 import {
@@ -68,7 +68,7 @@ export function BlogPage() {
       >
         <div className="flex gap-3 overflow-x-auto px-0.5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((category, index) => (
-            <WebsiteButton
+            <Button
               key={category}
               type="button"
               variant={index === 0 ? "primary" : "secondary"}
@@ -76,7 +76,7 @@ export function BlogPage() {
               className="shrink-0"
             >
               {category}
-            </WebsiteButton>
+            </Button>
           ))}
         </div>
       </section>
@@ -146,13 +146,13 @@ export function BlogPage() {
                 <p className="leading-[1.8] text-[rgba(255,255,255,0.84)]">
                   {featuredArticle.featured?.description}
                 </p>
-                <WebsiteButton
+                <Button
                   href={`/blog/${featuredArticle.slug}`}
                   variant="inverted"
                 >
                   {featuredArticle.featured?.ctaLabel}
                   <MoveRight size={18} />
-                </WebsiteButton>
+                </Button>
               </div>
             </article>
           ) : null}
@@ -178,9 +178,9 @@ export function BlogPage() {
             aria-label="Your email address"
             className="min-w-0 flex-1 border-0 bg-transparent px-[18px] text-[var(--ink)] outline-none max-[720px]:min-h-12"
           />
-          <WebsiteButton href={TELEGRAM_BOT_URL} external variant="primary">
+          <Button href={TELEGRAM_BOT_URL} external variant="primary">
             Join Now
-          </WebsiteButton>
+          </Button>
         </div>
 
         <div className="mt-[18px] text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-[rgba(116,119,121,0.9)]">

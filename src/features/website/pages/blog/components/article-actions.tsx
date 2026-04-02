@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Bookmark, Check, Heart, Share2 } from "lucide-react";
 
-import { WebsiteButton } from "@/features/website/components/button";
+import { Button } from "@/features/website/components/button";
 
 const SAVED_KEY = "upwork-bot-bd:saved-articles";
 const LIKED_KEY = "upwork-bot-bd:liked-articles";
@@ -111,7 +111,7 @@ export function BlogArticleActions({
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <WebsiteButton
+      <Button
         type="button"
         variant="inverted"
         size="sm"
@@ -121,8 +121,8 @@ export function BlogArticleActions({
         title={shared ? "Link copied" : "Share article"}
       >
         {shared ? <Check size={18} /> : <Share2 size={18} />}
-      </WebsiteButton>
-      <WebsiteButton
+      </Button>
+      <Button
         type="button"
         variant="inverted"
         size="sm"
@@ -132,8 +132,8 @@ export function BlogArticleActions({
         title={saved ? "Saved" : "Save article"}
       >
         <Bookmark size={18} />
-      </WebsiteButton>
-      <WebsiteButton
+      </Button>
+      <Button
         type="button"
         variant="inverted"
         size="sm"
@@ -143,7 +143,7 @@ export function BlogArticleActions({
         title={liked ? "Liked" : "Like article"}
       >
         <Heart size={18} />
-      </WebsiteButton>
+      </Button>
     </div>
   );
 }
