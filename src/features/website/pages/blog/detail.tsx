@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MoveLeft, Send, TrendingUp } from "lucide-react";
 
+import { websiteButtonClass } from "@/features/website/components/button";
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
 import {
@@ -165,9 +166,15 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                 href={TELEGRAM_BOT_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2.5 rounded-full bg-[rgba(255,255,255,0.96)] px-[22px] py-[14px] font-bold text-[var(--primary)] transition duration-200 hover:-translate-y-0.5"
+                className={websiteButtonClass({
+                  variant: "inverted",
+                  size: "sm",
+                  fullWidth: true,
+                  className:
+                    "justify-center gap-2.5 text-[#4a40e0] visited:text-[#4a40e0] hover:text-[#4a40e0] focus:text-[#4a40e0] [&_svg]:text-[#4a40e0]"
+                })}
               >
-                <Send size={18} />
+                <Send size={16} />
                 টেলিগ্রামে যুক্ত হোন
               </a>
             </div>
@@ -212,7 +219,7 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
           <div className="flex">
             <Link
               href="/blog"
-              className="inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full bg-[rgba(255,255,255,0.86)] px-[22px] py-[14px] font-bold text-[var(--muted)] shadow-[0_16px_36px_rgba(74,64,224,0.08)] transition duration-200 hover:-translate-y-0.5"
+              className={websiteButtonClass({ variant: "secondary" })}
             >
               <MoveLeft size={18} />
               সব আর্টিকেলে ফিরে যান

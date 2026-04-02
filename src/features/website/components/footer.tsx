@@ -37,7 +37,7 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="Contact on Telegram"
-              className="inline-flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.86)] text-[var(--muted)] shadow-[0_14px_26px_rgba(74,64,224,0.06)] transition duration-200 hover:-translate-y-0.5 hover:text-[var(--primary)]"
+              className="inline-flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[var(--button-inverted-bg)] text-[var(--button-inverted-ink)] shadow-[0_12px_24px_rgba(74,64,224,0.08)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--button-inverted-hover)] hover:text-[var(--button-inverted-ink)]"
             >
               <Mail size={18} />
             </a>
@@ -46,7 +46,7 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="Telegram support"
-              className="inline-flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.86)] text-[var(--muted)] shadow-[0_14px_26px_rgba(74,64,224,0.06)] transition duration-200 hover:-translate-y-0.5 hover:text-[var(--primary)]"
+              className="inline-flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[var(--button-inverted-bg)] text-[var(--button-inverted-ink)] shadow-[0_12px_24px_rgba(74,64,224,0.08)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--button-inverted-hover)] hover:text-[var(--button-inverted-ink)]"
             >
               <Sparkles size={18} />
             </a>

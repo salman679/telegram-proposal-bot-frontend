@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Mail, MoveRight } from "lucide-react";
 
+import { websiteButtonClass } from "@/features/website/components/button";
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
 import {
@@ -19,8 +20,6 @@ const toneClasses = {
   secondary: "text-[var(--secondary)]",
   tertiary: "text-[var(--tertiary)]"
 } as const;
-const primaryButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full [background:var(--gradient-primary)] px-6 py-[14px] font-bold text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] transition duration-200 hover:-translate-y-0.5";
 
 export function BlogPage() {
   const categories = getBlogCategories();
@@ -64,7 +63,7 @@ export function BlogPage() {
       </section>
 
       <section
-        className={`${siteWidthClass} sticky top-[94px] z-[45] py-[14px] pb-[18px] max-[900px]:top-[152px] max-[720px]:static max-[720px]:py-2`}
+        className={`${siteWidthClass} py-[14px] pb-[18px] max-[720px]:py-2`}
         aria-label="Article categories"
       >
         <div className="flex gap-3 overflow-x-auto px-0.5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -74,8 +73,16 @@ export function BlogPage() {
               type="button"
               className={
                 index === 0
-                  ? "min-h-[46px] shrink-0 rounded-full bg-[var(--primary)] px-[22px] py-3 font-bold text-[#f4f1ff] shadow-[var(--shadow-light)]"
-                  : "min-h-[46px] shrink-0 rounded-full bg-[rgba(255,255,255,0.9)] px-[22px] py-3 font-bold text-[var(--muted)] shadow-[var(--shadow-light)]"
+                  ? websiteButtonClass({
+                      variant: "primary",
+                      size: "sm",
+                      className: "shrink-0"
+                    })
+                  : websiteButtonClass({
+                      variant: "secondary",
+                      size: "sm",
+                      className: "shrink-0"
+                    })
               }
             >
               {category}
@@ -151,7 +158,7 @@ export function BlogPage() {
                 </p>
                 <Link
                   href={`/blog/${featuredArticle.slug}`}
-                  className="inline-flex min-h-[52px] w-fit items-center justify-center gap-2.5 rounded-full bg-[rgba(255,255,255,0.94)] px-6 py-[14px] font-bold text-[var(--primary)] transition duration-200 hover:-translate-y-0.5"
+                  className={websiteButtonClass({ variant: "inverted" })}
                 >
                   {featuredArticle.featured?.ctaLabel}
                   <MoveRight size={18} />
@@ -185,7 +192,7 @@ export function BlogPage() {
             href={TELEGRAM_BOT_URL}
             target="_blank"
             rel="noreferrer"
-            className={primaryButtonClass}
+            className={websiteButtonClass({ variant: "primary" })}
           >
             Join Now
           </a>

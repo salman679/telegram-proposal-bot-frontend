@@ -16,6 +16,7 @@ import {
   Zap
 } from "lucide-react";
 
+import { websiteButtonClass } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import {
   SITE_CONTAINER_CLASS,
@@ -142,14 +143,6 @@ const articles = [
 const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
-const primaryButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full [background:var(--gradient-primary)] px-6 py-[14px] font-bold text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] transition duration-200 hover:-translate-y-0.5";
-const secondaryButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--surface-strong)] px-6 py-[14px] font-bold text-[var(--primary)] transition duration-200 hover:-translate-y-0.5";
-const outlineButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--surface-strong)] px-6 py-[14px] font-bold text-[var(--primary)] transition duration-200 hover:-translate-y-0.5";
-const lightButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center rounded-full bg-[rgba(255,255,255,0.92)] px-6 py-[14px] font-bold text-[var(--primary)] shadow-[var(--shadow-light)] transition duration-200 hover:-translate-y-0.5";
 const toneClasses = {
   primary: "bg-[rgba(74,64,224,0.12)] text-[var(--primary)]",
   secondary: "bg-[rgba(112,42,225,0.12)] text-[var(--secondary)]",
@@ -195,11 +188,19 @@ export function HomePage() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-4">
-            <a href={TELEGRAM_BOT_URL} target="_blank" rel="noreferrer" className={primaryButtonClass}>
+            <a
+              href={TELEGRAM_BOT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className={websiteButtonClass({ variant: "primary" })}
+            >
               Telegram-এ শুরু করুন
               <Rocket size={18} />
             </a>
-            <Link href="/how-it-works" className={secondaryButtonClass}>
+            <Link
+              href="/how-it-works"
+              className={websiteButtonClass({ variant: "secondary" })}
+            >
               লাইভ ডেমো দেখুন
             </Link>
           </div>
@@ -338,7 +339,12 @@ export function HomePage() {
             আপডেট এবং practical bidding tip মিস করবেন না।
           </p>
         </div>
-        <a href={TELEGRAM_BOT_URL} target="_blank" rel="noreferrer" className={lightButtonClass}>
+        <a
+          href={TELEGRAM_BOT_URL}
+          target="_blank"
+          rel="noreferrer"
+          className={websiteButtonClass({ variant: "inverted" })}
+        >
           Open Telegram Bot
         </a>
       </section>
@@ -398,7 +404,9 @@ export function HomePage() {
                 href={TELEGRAM_BOT_URL}
                 target="_blank"
                 rel="noreferrer"
-                className={plan.featured ? primaryButtonClass : outlineButtonClass}
+                className={websiteButtonClass({
+                  variant: plan.featured ? "primary" : "secondary"
+                })}
               >
                 {plan.cta}
               </a>
@@ -511,7 +519,10 @@ export function HomePage() {
                 placeholder="Email"
                 className="w-full rounded-2xl border border-transparent bg-[var(--surface-highest)] px-4 py-[14px] text-[var(--ink)] outline-none focus:border-[rgba(74,64,224,0.4)] focus:shadow-[0_0_0_6px_rgba(136,133,255,0.18)]"
               />
-              <button type="button" className={primaryButtonClass}>
+              <button
+                type="button"
+                className={websiteButtonClass({ variant: "primary" })}
+              >
                 Join
               </button>
             </div>

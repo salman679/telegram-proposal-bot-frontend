@@ -18,6 +18,14 @@
   --primary-soft: #9795ff;
   --secondary: #702ae1;
   --tertiary: #00628c;
+  --button-on-primary: #ffffff;
+  --button-secondary-bg: #dfe3e6;
+  --button-secondary-hover: #d9dde0;
+  --button-secondary-ink: #4a40e0;
+  --button-inverted-bg: rgba(255, 255, 255, 0.98);
+  --button-inverted-hover: #f6f5ff;
+  --button-inverted-ink: #4a40e0;
+  --button-ring: rgba(151, 149, 255, 0.22);
   --success: #1d8a5b;
   --warning: #d08012;
   --danger: #b41340;

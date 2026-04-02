@@ -11,6 +11,7 @@ import {
   Trophy
 } from "lucide-react";
 
+import { websiteButtonClass } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import {
@@ -54,12 +55,6 @@ const dailyTips = [
 const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
-const pillButtonBaseClass =
-  "inline-flex min-h-[52px] items-center justify-center rounded-full px-6 py-[14px] font-bold transition duration-200 hover:-translate-y-0.5";
-const primaryButtonClass = `${pillButtonBaseClass} min-w-[220px] [background:var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] max-[640px]:w-full`;
-const secondaryButtonClass = `${pillButtonBaseClass} min-w-[220px] border border-[rgba(74,64,224,0.1)] bg-[var(--surface-low)] text-[var(--ink)] shadow-[0_14px_30px_rgba(74,64,224,0.08)] max-[640px]:w-full`;
-const spotlightButtonClass =
-  "inline-flex min-h-[58px] w-full items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(232,236,255,0.94))] px-5 py-[15px] text-[1rem] font-extrabold tracking-[0.01em] text-[#1f2553] shadow-[0_16px_34px_rgba(11,16,32,0.24)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_42px_rgba(11,16,32,0.3)]";
 const toneClasses = {
   primary: "bg-[rgba(74,64,224,0.12)] text-[var(--primary)]",
   secondary: "bg-[rgba(112,42,225,0.12)] text-[var(--secondary)]",
@@ -239,7 +234,11 @@ export function HowItWorksPage() {
               href={TELEGRAM_BOT_URL}
               target="_blank"
               rel="noreferrer"
-              className={spotlightButtonClass}
+              className={websiteButtonClass({
+                variant: "inverted",
+                fullWidth: true,
+                className: "min-h-[58px] text-[1rem]"
+              })}
               aria-label="নোটিফিকেশন অন করুন"
             >
               নোটিফিকেশন অন করুন
@@ -258,11 +257,20 @@ export function HowItWorksPage() {
               href={TELEGRAM_BOT_URL}
               target="_blank"
               rel="noreferrer"
-              className={primaryButtonClass}
+              className={websiteButtonClass({
+                variant: "primary",
+                className: "min-w-[220px] max-[640px]:w-full"
+              })}
             >
               এখনই শুরু করুন - ফ্রি
             </a>
-            <Link href="/admin/login" className={secondaryButtonClass}>
+            <Link
+              href="/admin/login"
+              className={websiteButtonClass({
+                variant: "secondary",
+                className: "min-w-[220px] max-[640px]:w-full"
+              })}
+            >
               Bangla Support
             </Link>
           </div>

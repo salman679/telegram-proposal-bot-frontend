@@ -7,6 +7,7 @@ import {
   ADMIN_PASSWORD,
   sanitizeAdminRedirect
 } from "@/features/admin/lib/auth";
+import { websiteButtonClass } from "@/features/website/components/button";
 import { buildPageMetadata } from "@/features/website/lib/seo";
 
 type SearchParams = Promise<{
@@ -123,7 +124,10 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
 
           <button
             type="submit"
-            className="cursor-pointer rounded-full border-none [background:var(--gradient-primary)] px-[18px] py-[15px] font-bold text-[#f4f1ff] shadow-[var(--shadow-light)]"
+            className={websiteButtonClass({
+              variant: "primary",
+              className: "cursor-pointer"
+            })}
           >
             Enter dashboard
           </button>

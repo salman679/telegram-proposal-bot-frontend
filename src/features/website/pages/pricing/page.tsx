@@ -5,6 +5,7 @@ import {
   Sparkles
 } from "lucide-react";
 
+import { websiteButtonClass } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import {
@@ -81,10 +82,6 @@ const trustStats = [
 const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
-const pillButtonBaseClass =
-  "inline-flex min-h-[52px] items-center justify-center rounded-full px-6 py-[14px] font-bold transition duration-200 hover:-translate-y-0.5";
-const primaryButtonClass = `${pillButtonBaseClass} [background:var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)]`;
-const secondaryButtonClass = `${pillButtonBaseClass} bg-[var(--surface-strong)] text-[var(--primary)]`;
 
 export function PricingPage() {
   return (
@@ -177,7 +174,9 @@ export function PricingPage() {
               href={TELEGRAM_BOT_URL}
               target="_blank"
               rel="noreferrer"
-              className={plan.featured ? primaryButtonClass : secondaryButtonClass}
+              className={websiteButtonClass({
+                variant: plan.featured ? "primary" : "secondary"
+              })}
             >
               {plan.cta}
             </a>
