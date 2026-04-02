@@ -168,9 +168,9 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                 variant="inverted"
                 size="sm"
                 fullWidth
-                className="justify-center gap-2.5 bg-white font-extrabold shadow-[0_14px_28px_rgba(11,16,32,0.14)]"
+                className="justify-center gap-2.5 shadow-[0_14px_28px_rgba(11,16,32,0.14)]"
               >
-                <Send size={16} />
+                <Send size={16} className="text-[var(--primary)]" />
                 টেলিগ্রামে যুক্ত হোন
               </Button>
             </div>

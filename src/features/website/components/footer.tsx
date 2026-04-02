@@ -41,7 +41,7 @@ export function Footer() {
               aria-label="Contact on Telegram"
               className="h-[38px] w-[38px] min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)]"
             >
-              <Mail size={18} />
+              <Mail size={18} className="text-[var(--primary)]" />
             </Button>
             <Button
               href={TELEGRAM_BOT_URL}
@@ -51,7 +51,7 @@ export function Footer() {
               aria-label="Telegram support"
               className="h-[38px] w-[38px] min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)]"
             >
-              <Sparkles size={18} />
+              <Sparkles size={18} className="text-[var(--primary)]" />
             </Button>
           </div>
         </div>

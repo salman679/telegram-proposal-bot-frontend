@@ -104,13 +104,15 @@ export function BlogArticleActions({
     writeStoredSlugs(LIKED_KEY, nextValues);
   }
 
+  const railClass =
+    "rounded-[30px] border border-[rgba(255,255,255,0.72)] bg-[rgba(255,255,255,0.74)] p-3 shadow-[0_22px_44px_rgba(74,64,224,0.1)] backdrop-blur-[20px]";
   const actionButtonClass =
-    "h-12 w-12 min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)] hover:shadow-[0_18px_34px_rgba(74,64,224,0.12)]";
+    "h-14 w-14 min-h-0 rounded-[20px] border border-[rgba(74,64,224,0.08)] bg-[rgba(255,255,255,0.96)] px-0 py-0 shadow-[0_14px_28px_rgba(74,64,224,0.08)] hover:-translate-y-1 hover:shadow-[0_20px_36px_rgba(74,64,224,0.14)]";
   const activeActionButtonClass =
-    "[background:var(--gradient-primary)] !text-white [&_svg]:!text-white ring-transparent";
+    "border-transparent bg-[linear-gradient(135deg,#4a40e0_0%,#9795ff_100%)] text-white shadow-[0_18px_34px_rgba(74,64,224,0.2)]";
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className={`flex flex-col items-center gap-3 ${railClass}`}>
       <Button
         type="button"
         variant="inverted"
@@ -120,7 +122,11 @@ export function BlogArticleActions({
         aria-label={shared ? "Article link copied" : "Share article"}
         title={shared ? "Link copied" : "Share article"}
       >
-        {shared ? <Check size={18} /> : <Share2 size={18} />}
+        {shared ? (
+          <Check size={19} className="text-white" />
+        ) : (
+          <Share2 size={19} className="text-[var(--primary)]" />
+        )}
       </Button>
       <Button
         type="button"
@@ -131,7 +137,10 @@ export function BlogArticleActions({
         aria-label={saved ? "Remove bookmark" : "Save article"}
         title={saved ? "Saved" : "Save article"}
       >
-        <Bookmark size={18} />
+        <Bookmark
+          size={19}
+          className={saved ? "text-white" : "text-[var(--primary)]"}
+        />
       </Button>
       <Button
         type="button"
@@ -142,7 +151,10 @@ export function BlogArticleActions({
         aria-label={liked ? "Unlike article" : "Like article"}
         title={liked ? "Liked" : "Like article"}
       >
-        <Heart size={18} />
+        <Heart
+          size={19}
+          className={liked ? "text-white" : "text-[var(--primary)]"}
+        />
       </Button>
     </div>
   );

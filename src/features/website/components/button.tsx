@@ -26,13 +26,13 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "[background:var(--gradient-primary)] !text-white visited:!text-white hover:!text-white focus:!text-white [&_svg]:!text-white shadow-[0_12px_28px_rgba(74,64,224,0.18)] hover:brightness-[1.03]",
+    "bg-[linear-gradient(135deg,#4a40e0_0%,#9795ff_100%)] text-white visited:text-white hover:text-white focus:text-white [&_svg]:text-white shadow-[0_12px_28px_rgba(74,64,224,0.18)] hover:brightness-[1.03]",
   secondary:
-    "bg-[#dfe3e6] !text-[#4a40e0] visited:!text-[#4a40e0] hover:bg-[#d9dde0] hover:!text-[#4a40e0] focus:!text-[#4a40e0] [&_svg]:!text-[#4a40e0] shadow-[0_10px_22px_rgba(74,64,224,0.08)]",
+    "bg-[#dfe3e6] text-[#4a40e0] visited:text-[#4a40e0] hover:bg-[#d9dde0] hover:text-[#4a40e0] focus:text-[#4a40e0] [&_svg]:text-[#4a40e0] shadow-[0_10px_22px_rgba(74,64,224,0.08)]",
   tertiary:
-    "bg-transparent px-0 py-0 !text-[var(--primary)] visited:!text-[var(--primary)] hover:!text-[var(--primary)] focus:!text-[var(--primary)] shadow-none",
+    "bg-transparent px-0 py-0 text-[var(--primary)] visited:text-[var(--primary)] hover:text-[var(--primary)] focus:text-[var(--primary)] shadow-none",
   inverted:
-    "bg-white !text-[#4a40e0] visited:!text-[#4a40e0] hover:bg-[#f6f5ff] hover:!text-[#4a40e0] focus:!text-[#4a40e0] [&_svg]:!text-[#4a40e0] shadow-[0_12px_24px_rgba(11,16,32,0.12)] ring-1 ring-[rgba(74,64,224,0.08)]"
+    "bg-white text-[#4a40e0] visited:text-[#4a40e0] hover:bg-[#f6f5ff] hover:text-[#4a40e0] focus:text-[#4a40e0] [&_svg]:text-[#4a40e0] shadow-[0_12px_24px_rgba(11,16,32,0.12)] ring-1 ring-[rgba(74,64,224,0.08)]"
 };
 
 export function buttonClass({
@@ -78,21 +78,39 @@ function isLinkProps(props: ButtonLinkProps | ButtonNativeProps): props is Butto
 export function Button(
   props: ButtonLinkProps | ButtonNativeProps
 ) {
-  const { variant, size, fullWidth, className, children } = props;
-  const resolvedClassName = buttonClass({
-    variant,
-    size,
-    fullWidth,
-    className
-  });
-
   if (isLinkProps(props)) {
-    const { href, external, ...restProps } = props;
+    const {
+      href,
+      external,
+      variant,
+      size,
+      fullWidth,
+      className,
+      children,
+      target,
+      rel,
+      ...restProps
+    } = props;
+    const resolvedClassName = buttonClass({
+      variant,
+      size,
+      fullWidth,
+      className
+    });
     const isExternal = external || /^(https?:)?\/\//.test(href);
 
     if (isExternal) {
+      const resolvedTarget = target ?? "_blank";
+      const resolvedRel = rel ?? "noreferrer noopener";
+
       return (
-        <a href={href} className={resolvedClassName} {...restProps}>
+        <a
+          href={href}
+          className={resolvedClassName}
+          target={resolvedTarget}
+          rel={resolvedRel}
+          {...restProps}
+        >
           {children}
         </a>
       );
@@ -105,9 +123,22 @@ export function Button(
     );
   }
 
-  const { type, ...restProps } = props;
-  const buttonType: ButtonHTMLAttributes<HTMLButtonElement>["type"] =
-    type ?? "button";
+  const {
+    type = "button",
+    variant,
+    size,
+    fullWidth,
+    className,
+    children,
+    ...restProps
+  } = props;
+  const resolvedClassName = buttonClass({
+    variant,
+    size,
+    fullWidth,
+    className
+  });
+  const buttonType: ButtonHTMLAttributes<HTMLButtonElement>["type"] = type;
 
   return (
     <button type={buttonType} className={resolvedClassName} {...restProps}>
