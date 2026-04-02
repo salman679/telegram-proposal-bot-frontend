@@ -10,7 +10,7 @@ if (!["dev", "build", "start"].includes(command)) {
 }
 
 const nextBin = fileURLToPath(new URL("../node_modules/next/dist/bin/next", import.meta.url));
-const distDir = command === "dev" ? ".next-dev" : ".next-build";
+const distDir = command === "dev" ? ".next-dev" : ".next";
 
 const child = spawn(process.execPath, [nextBin, command, ...extraArgs], {
   cwd: process.cwd(),

@@ -171,10 +171,11 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                   size: "sm",
                   fullWidth: true,
                   className:
-                    "justify-center gap-2.5 text-[#4a40e0] visited:text-[#4a40e0] hover:text-[#4a40e0] focus:text-[#4a40e0] [&_svg]:text-[#4a40e0]"
+                    "justify-center gap-2.5 bg-white font-extrabold shadow-[0_14px_28px_rgba(11,16,32,0.14)] !text-[#4a40e0] visited:!text-[#4a40e0] hover:!text-[#4a40e0] focus:!text-[#4a40e0]"
                 })}
+                style={{ color: "#4a40e0" }}
               >
-                <Send size={16} />
+                <Send size={16} color="#4a40e0" />
                 টেলিগ্রামে যুক্ত হোন
               </a>
             </div>
