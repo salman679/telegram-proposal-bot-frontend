@@ -5,7 +5,7 @@ import {
   Sparkles
 } from "lucide-react";
 
-import { websiteButtonClass } from "@/features/website/components/button";
+import { WebsiteButton } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import {
@@ -170,16 +170,13 @@ export function PricingPage() {
               })}
             </ul>
 
-            <a
+            <WebsiteButton
               href={TELEGRAM_BOT_URL}
-              target="_blank"
-              rel="noreferrer"
-              className={websiteButtonClass({
-                variant: plan.featured ? "primary" : "secondary"
-              })}
+              external
+              variant={plan.featured ? "primary" : "secondary"}
             >
               {plan.cta}
-            </a>
+            </WebsiteButton>
           </article>
         ))}
       </section>

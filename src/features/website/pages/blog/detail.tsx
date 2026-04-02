@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MoveLeft, Send, TrendingUp } from "lucide-react";
 
-import { websiteButtonClass } from "@/features/website/components/button";
+import { WebsiteButton } from "@/features/website/components/button";
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
 import {
@@ -162,22 +162,17 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                 প্রতিদিন ফ্রিল্যান্সিং টিপস, নতুন জব আপডেট, আর প্রপোজাল স্ট্র্যাটেজি
                 পেতে এখনই জয়েন করুন।
               </p>
-              <a
+              <WebsiteButton
                 href={TELEGRAM_BOT_URL}
-                target="_blank"
-                rel="noreferrer"
-                className={websiteButtonClass({
-                  variant: "inverted",
-                  size: "sm",
-                  fullWidth: true,
-                  className:
-                    "justify-center gap-2.5 bg-white font-extrabold shadow-[0_14px_28px_rgba(11,16,32,0.14)] !text-[#4a40e0] visited:!text-[#4a40e0] hover:!text-[#4a40e0] focus:!text-[#4a40e0]"
-                })}
-                style={{ color: "#4a40e0" }}
+                external
+                variant="inverted"
+                size="sm"
+                fullWidth
+                className="justify-center gap-2.5 bg-white font-extrabold shadow-[0_14px_28px_rgba(11,16,32,0.14)]"
               >
-                <Send size={16} color="#4a40e0" />
+                <Send size={16} />
                 টেলিগ্রামে যুক্ত হোন
-              </a>
+              </WebsiteButton>
             </div>
           </section>
 
@@ -218,13 +213,13 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
           </section>
 
           <div className="flex">
-            <Link
+            <WebsiteButton
               href="/blog"
-              className={websiteButtonClass({ variant: "secondary" })}
+              variant="secondary"
             >
               <MoveLeft size={18} />
               সব আর্টিকেলে ফিরে যান
-            </Link>
+            </WebsiteButton>
           </div>
         </aside>
       </div>

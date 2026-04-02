@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Globe, Mail, Sparkles } from "lucide-react";
 
+import { WebsiteButton } from "@/features/website/components/button";
 import {
   SITE_CONTAINER_CLASS,
   SITE_NAME,
@@ -32,24 +33,26 @@ export function Footer() {
             © 2026 Upwork Bot BD. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <a
+            <WebsiteButton
               href={TELEGRAM_BOT_URL}
-              target="_blank"
-              rel="noreferrer"
+              external
+              variant="inverted"
+              size="sm"
               aria-label="Contact on Telegram"
-              className="inline-flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[var(--button-inverted-bg)] text-[var(--button-inverted-ink)] shadow-[0_12px_24px_rgba(74,64,224,0.08)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--button-inverted-hover)] hover:text-[var(--button-inverted-ink)]"
+              className="h-[38px] w-[38px] min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)]"
             >
               <Mail size={18} />
-            </a>
-            <a
+            </WebsiteButton>
+            <WebsiteButton
               href={TELEGRAM_BOT_URL}
-              target="_blank"
-              rel="noreferrer"
+              external
+              variant="inverted"
+              size="sm"
               aria-label="Telegram support"
-              className="inline-flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[var(--button-inverted-bg)] text-[var(--button-inverted-ink)] shadow-[0_12px_24px_rgba(74,64,224,0.08)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--button-inverted-hover)] hover:text-[var(--button-inverted-ink)]"
+              className="h-[38px] w-[38px] min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)]"
             >
               <Sparkles size={18} />
-            </a>
+            </WebsiteButton>
           </div>
         </div>
 

@@ -16,7 +16,7 @@ import {
   Zap
 } from "lucide-react";
 
-import { websiteButtonClass } from "@/features/website/components/button";
+import { WebsiteButton } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import {
   SITE_CONTAINER_CLASS,
@@ -188,21 +188,13 @@ export function HomePage() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-4">
-            <a
-              href={TELEGRAM_BOT_URL}
-              target="_blank"
-              rel="noreferrer"
-              className={websiteButtonClass({ variant: "primary" })}
-            >
+            <WebsiteButton href={TELEGRAM_BOT_URL} external variant="primary">
               Telegram-এ শুরু করুন
               <Rocket size={18} />
-            </a>
-            <Link
-              href="/how-it-works"
-              className={websiteButtonClass({ variant: "secondary" })}
-            >
+            </WebsiteButton>
+            <WebsiteButton href="/how-it-works" variant="secondary">
               লাইভ ডেমো দেখুন
-            </Link>
+            </WebsiteButton>
           </div>
 
           <div className="mt-[22px] flex flex-wrap items-center gap-4">
@@ -339,14 +331,9 @@ export function HomePage() {
             আপডেট এবং practical bidding tip মিস করবেন না।
           </p>
         </div>
-        <a
-          href={TELEGRAM_BOT_URL}
-          target="_blank"
-          rel="noreferrer"
-          className={websiteButtonClass({ variant: "inverted" })}
-        >
+        <WebsiteButton href={TELEGRAM_BOT_URL} external variant="inverted">
           Open Telegram Bot
-        </a>
+        </WebsiteButton>
       </section>
 
       <section
@@ -400,16 +387,13 @@ export function HomePage() {
                 ))}
               </ul>
 
-              <a
+              <WebsiteButton
                 href={TELEGRAM_BOT_URL}
-                target="_blank"
-                rel="noreferrer"
-                className={websiteButtonClass({
-                  variant: plan.featured ? "primary" : "secondary"
-                })}
+                external
+                variant={plan.featured ? "primary" : "secondary"}
               >
                 {plan.cta}
-              </a>
+              </WebsiteButton>
             </article>
           ))}
         </div>
@@ -519,12 +503,9 @@ export function HomePage() {
                 placeholder="Email"
                 className="w-full rounded-2xl border border-transparent bg-[var(--surface-highest)] px-4 py-[14px] text-[var(--ink)] outline-none focus:border-[rgba(74,64,224,0.4)] focus:shadow-[0_0_0_6px_rgba(136,133,255,0.18)]"
               />
-              <button
-                type="button"
-                className={websiteButtonClass({ variant: "primary" })}
-              >
+              <WebsiteButton type="button" variant="primary">
                 Join
-              </button>
+              </WebsiteButton>
             </div>
           </div>
         </div>

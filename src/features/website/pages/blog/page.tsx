@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Mail, MoveRight } from "lucide-react";
 
-import { websiteButtonClass } from "@/features/website/components/button";
+import { WebsiteButton } from "@/features/website/components/button";
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
 import {
@@ -68,25 +68,15 @@ export function BlogPage() {
       >
         <div className="flex gap-3 overflow-x-auto px-0.5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((category, index) => (
-            <button
+            <WebsiteButton
               key={category}
               type="button"
-              className={
-                index === 0
-                  ? websiteButtonClass({
-                      variant: "primary",
-                      size: "sm",
-                      className: "shrink-0"
-                    })
-                  : websiteButtonClass({
-                      variant: "secondary",
-                      size: "sm",
-                      className: "shrink-0"
-                    })
-              }
+              variant={index === 0 ? "primary" : "secondary"}
+              size="sm"
+              className="shrink-0"
             >
               {category}
-            </button>
+            </WebsiteButton>
           ))}
         </div>
       </section>
@@ -156,13 +146,13 @@ export function BlogPage() {
                 <p className="leading-[1.8] text-[rgba(255,255,255,0.84)]">
                   {featuredArticle.featured?.description}
                 </p>
-                <Link
+                <WebsiteButton
                   href={`/blog/${featuredArticle.slug}`}
-                  className={websiteButtonClass({ variant: "inverted" })}
+                  variant="inverted"
                 >
                   {featuredArticle.featured?.ctaLabel}
                   <MoveRight size={18} />
-                </Link>
+                </WebsiteButton>
               </div>
             </article>
           ) : null}
@@ -188,14 +178,9 @@ export function BlogPage() {
             aria-label="Your email address"
             className="min-w-0 flex-1 border-0 bg-transparent px-[18px] text-[var(--ink)] outline-none max-[720px]:min-h-12"
           />
-          <a
-            href={TELEGRAM_BOT_URL}
-            target="_blank"
-            rel="noreferrer"
-            className={websiteButtonClass({ variant: "primary" })}
-          >
+          <WebsiteButton href={TELEGRAM_BOT_URL} external variant="primary">
             Join Now
-          </a>
+          </WebsiteButton>
         </div>
 
         <div className="mt-[18px] text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-[rgba(116,119,121,0.9)]">

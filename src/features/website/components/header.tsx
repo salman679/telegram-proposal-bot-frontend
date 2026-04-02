@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { websiteButtonClass } from "@/features/website/components/button";
+import { WebsiteButton } from "@/features/website/components/button";
 import {
   SITE_CONTAINER_CLASS,
   SITE_NAME,
@@ -54,19 +54,15 @@ export function Header({ activePage, benefitsHref }: HeaderProps) {
       </nav>
 
       <div className="flex shrink-0 items-center gap-4">
-        <a
+        <WebsiteButton
           href={TELEGRAM_BOT_URL}
-          target="_blank"
-          rel="noreferrer"
-          className={websiteButtonClass({
-            variant: "primary",
-            size: "sm",
-            className:
-              "px-[24px] !text-white visited:!text-white hover:!text-white focus:!text-white max-[780px]:min-h-[40px] max-[780px]:px-[16px] max-[780px]:text-[0.84rem]"
-          })}
+          external
+          variant="primary"
+          size="sm"
+          className="px-[24px] max-[780px]:min-h-[40px] max-[780px]:px-[16px] max-[780px]:text-[0.84rem]"
         >
           Get Started
-        </a>
+        </WebsiteButton>
       </div>
     </header>
   );

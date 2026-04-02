@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   BellRing,
   Bolt,
@@ -11,7 +10,7 @@ import {
   Trophy
 } from "lucide-react";
 
-import { websiteButtonClass } from "@/features/website/components/button";
+import { WebsiteButton } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import {
@@ -230,19 +229,16 @@ export function HowItWorksPage() {
             <p className="font-bold text-[rgba(237,240,255,0.82)]">
               আজকের টিপস মিস করবেন না!
             </p>
-            <a
+            <WebsiteButton
               href={TELEGRAM_BOT_URL}
-              target="_blank"
-              rel="noreferrer"
-              className={websiteButtonClass({
-                variant: "inverted",
-                fullWidth: true,
-                className: "min-h-[58px] text-[1rem]"
-              })}
+              external
+              variant="inverted"
+              fullWidth
+              className="min-h-[58px] text-[1rem]"
               aria-label="নোটিফিকেশন অন করুন"
             >
               নোটিফিকেশন অন করুন
-            </a>
+            </WebsiteButton>
           </div>
         </div>
       </section>
@@ -253,26 +249,21 @@ export function HowItWorksPage() {
             আপনি কি প্রস্তুত আপনার ফ্রিল্যান্সিং সফর শুরু করতে?
           </h2>
           <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
+            <WebsiteButton
               href={TELEGRAM_BOT_URL}
-              target="_blank"
-              rel="noreferrer"
-              className={websiteButtonClass({
-                variant: "primary",
-                className: "min-w-[220px] max-[640px]:w-full"
-              })}
+              external
+              variant="primary"
+              className="min-w-[220px] max-[640px]:w-full"
             >
               এখনই শুরু করুন - ফ্রি
-            </a>
-            <Link
+            </WebsiteButton>
+            <WebsiteButton
               href="/admin/login"
-              className={websiteButtonClass({
-                variant: "secondary",
-                className: "min-w-[220px] max-[640px]:w-full"
-              })}
+              variant="secondary"
+              className="min-w-[220px] max-[640px]:w-full"
             >
               Bangla Support
-            </Link>
+            </WebsiteButton>
           </div>
         </div>
       </section>

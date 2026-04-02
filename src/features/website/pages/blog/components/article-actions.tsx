@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Bookmark, Check, Heart, Share2 } from "lucide-react";
 
+import { WebsiteButton } from "@/features/website/components/button";
+
 const SAVED_KEY = "upwork-bot-bd:saved-articles";
 const LIKED_KEY = "upwork-bot-bd:liked-articles";
 
@@ -103,39 +105,45 @@ export function BlogArticleActions({
   }
 
   const actionButtonClass =
-    "inline-flex h-12 w-12 items-center justify-center rounded-full border-0 bg-[var(--button-inverted-bg)] text-[var(--button-inverted-ink)] shadow-[0_12px_24px_rgba(74,64,224,0.08)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--button-inverted-hover)] hover:shadow-[0_18px_34px_rgba(74,64,224,0.12)]";
+    "h-12 w-12 min-h-0 rounded-full px-0 py-0 shadow-[0_12px_24px_rgba(74,64,224,0.08)] hover:shadow-[0_18px_34px_rgba(74,64,224,0.12)]";
   const activeActionButtonClass =
-    "bg-[var(--gradient-primary)] text-[var(--button-on-primary)] [&_svg]:text-[var(--button-on-primary)]";
+    "[background:var(--gradient-primary)] !text-white [&_svg]:!text-white ring-transparent";
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <button
+      <WebsiteButton
         type="button"
+        variant="inverted"
+        size="sm"
         className={`${actionButtonClass} ${shared ? activeActionButtonClass : ""}`}
         onClick={handleShare}
         aria-label={shared ? "Article link copied" : "Share article"}
         title={shared ? "Link copied" : "Share article"}
       >
         {shared ? <Check size={18} /> : <Share2 size={18} />}
-      </button>
-      <button
+      </WebsiteButton>
+      <WebsiteButton
         type="button"
+        variant="inverted"
+        size="sm"
         className={`${actionButtonClass} ${saved ? activeActionButtonClass : ""}`}
         onClick={toggleSaved}
         aria-label={saved ? "Remove bookmark" : "Save article"}
         title={saved ? "Saved" : "Save article"}
       >
         <Bookmark size={18} />
-      </button>
-      <button
+      </WebsiteButton>
+      <WebsiteButton
         type="button"
+        variant="inverted"
+        size="sm"
         className={`${actionButtonClass} ${liked ? activeActionButtonClass : ""}`}
         onClick={toggleLiked}
         aria-label={liked ? "Unlike article" : "Like article"}
         title={liked ? "Liked" : "Like article"}
       >
         <Heart size={18} />
-      </button>
+      </WebsiteButton>
     </div>
   );
 }
