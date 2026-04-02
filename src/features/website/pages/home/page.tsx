@@ -17,7 +17,10 @@ import {
 } from "lucide-react";
 
 import { Header } from "@/features/website/components/header";
-import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
+import {
+  SITE_CONTAINER_CLASS,
+  TELEGRAM_BOT_URL
+} from "@/features/website/config/site";
 
 const socialProofAvatars = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBhiDwVbgXBL9VH-6pYT3skk1vk1MOGb9OyV-B5ggtBnUJx23stk5fAIB_VuQhCNtgUt8YwRYlr_lsmfKm977T4kluMUUg-tFZgmzc_MS8wxHz_HZ96PtI7F1NzgHqQAX0sY_4KDGQrcEe1af9PujsgSMqbwK_TUXkgm7_S0ooUiqunKXgIZdWmXDsZZIjNc0w7gzxETlH0SdD7krpOfyWERRSOEXAE8vIkmCoVMv7BML9o0tbDz6XpuzpdOmoIUMn8WcecqC2te9g",
@@ -136,7 +139,7 @@ const articles = [
   }
 ];
 
-const siteWidthClass = "relative z-[1] mx-auto w-full max-w-[1220px]";
+const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
 const primaryButtonClass =

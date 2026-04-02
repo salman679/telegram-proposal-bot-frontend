@@ -3,7 +3,10 @@ import { MoveLeft, Send, TrendingUp } from "lucide-react";
 
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
-import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
+import {
+  SITE_CONTAINER_CLASS,
+  TELEGRAM_BOT_URL
+} from "@/features/website/config/site";
 
 import { type BlogArticle, getPopularBlogArticles } from "./data";
 import { BlogArticleActions } from "./components/article-actions";
@@ -12,7 +15,7 @@ interface BlogDetailPageProps {
   article: BlogArticle;
 }
 
-const siteWidthClass = "relative z-[1] mx-auto w-full max-w-[1260px]";
+const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const banglaFontFamily = { fontFamily: "var(--font-bangla), sans-serif" };
 
 function renderContentBlock(article: BlogArticle) {

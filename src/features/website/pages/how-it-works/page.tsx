@@ -13,7 +13,10 @@ import {
 
 import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
-import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
+import {
+  SITE_CONTAINER_CLASS,
+  TELEGRAM_BOT_URL
+} from "@/features/website/config/site";
 
 const steps = [
   {
@@ -48,7 +51,7 @@ const dailyTips = [
   "সাকসেস স্টোরি"
 ];
 
-const siteWidthClass = "relative z-[1] mx-auto w-full max-w-[1260px]";
+const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
 const pillButtonBaseClass =

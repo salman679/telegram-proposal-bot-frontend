@@ -3,14 +3,17 @@ import { ArrowRight, Mail, MoveRight } from "lucide-react";
 
 import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
-import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
+import {
+  SITE_CONTAINER_CLASS,
+  TELEGRAM_BOT_URL
+} from "@/features/website/config/site";
 import {
   getBlogCategories,
   getBlogIndexArticles,
   getFeaturedBlogArticle
 } from "@/features/website/pages/blog/data";
 
-const siteWidthClass = "relative z-[1] mx-auto w-full max-w-[1260px]";
+const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const toneClasses = {
   primary: "text-[var(--primary)]",
   secondary: "text-[var(--secondary)]",
