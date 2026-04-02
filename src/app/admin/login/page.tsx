@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { LockKeyhole, ShieldCheck } from "lucide-react";
 
@@ -6,6 +7,7 @@ import {
   ADMIN_PASSWORD,
   sanitizeAdminRedirect
 } from "@/features/admin/lib/auth";
+import { buildPageMetadata } from "@/features/website/lib/seo";
 
 type SearchParams = Promise<{
   error?: string | string[];
@@ -15,6 +17,13 @@ type SearchParams = Promise<{
 interface LoginPageProps {
   searchParams?: SearchParams;
 }
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Admin Login - Upwork Bot BD",
+  description: "Private admin login for the Upwork Bot BD dashboard.",
+  path: "/admin/login",
+  noIndex: true
+});
 
 function getSingleValue(value?: string | string[]) {
   return Array.isArray(value) ? value[0] : value;

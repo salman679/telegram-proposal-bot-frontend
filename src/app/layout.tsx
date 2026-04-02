@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import { Hind_Siliguri, Manrope } from "next/font/google";
 
 import "@/app/globals.css";
+import { StructuredData } from "@/features/website/components/structured-data";
+import { SITE_NAME, SITE_URL } from "@/features/website/config/site";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  getWebsiteSchemas
+} from "@/features/website/lib/seo";
 
 const displayFont = Manrope({
   subsets: ["latin"],
@@ -15,9 +22,52 @@ const bodyFont = Hind_Siliguri({
 });
 
 export const metadata: Metadata = {
-  title: "Upwork Proposal Bot BD",
-  description:
-    "Bangla-first marketing site and admin analytics dashboard for the Telegram proposal bot."
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "Upwork Bot BD",
+    "AI proposal generator",
+    "Upwork proposal generator",
+    "Bangla freelancer tool",
+    "Upwork bidding assistant",
+    "Bangladesh freelancing"
+  ],
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    type: "website",
+    locale: "bn_BD",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        alt: SITE_NAME
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE]
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
+  }
 };
 
 export default function RootLayout({
@@ -31,7 +81,10 @@ export default function RootLayout({
       className={`${displayFont.variable} ${bodyFont.variable}`}
       suppressHydrationWarning
     >
-      <body>{children}</body>
+      <body>
+        <StructuredData data={getWebsiteSchemas()} />
+        {children}
+      </body>
     </html>
   );
 }
