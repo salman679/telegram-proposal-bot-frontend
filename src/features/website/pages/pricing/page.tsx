@@ -9,8 +9,6 @@ import { Header } from "@/features/website/components/header";
 import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import { TELEGRAM_BOT_URL } from "@/features/website/config/site";
 
-import styles from "./page.module.css";
-
 const pricingPlans = [
   {
     name: "Free Plan",
@@ -77,55 +75,95 @@ const trustStats = [
   { value: "৯৮%", label: "সন্তুষ্ট গ্রাহক" }
 ];
 
+const siteWidthClass = "relative z-[1] mx-auto w-full max-w-[1260px]";
+const surfaceCardClass =
+  "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
+const pillButtonBaseClass =
+  "inline-flex min-h-[52px] items-center justify-center rounded-full px-6 py-[14px] font-bold transition duration-200 hover:-translate-y-0.5";
+const primaryButtonClass = `${pillButtonBaseClass} bg-[var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)]`;
+const secondaryButtonClass = `${pillButtonBaseClass} bg-[var(--surface-strong)] text-[var(--primary)]`;
+
 export function PricingPage() {
   return (
-    <main className={styles.page}>
-      <div className={styles.bgGlowPrimary} />
-      <div className={styles.bgGlowSecondary} />
+    <main className="relative min-h-screen overflow-x-clip px-[clamp(18px,3vw,36px)] pb-28 pt-6">
+      <div
+        className="pointer-events-none absolute -left-[100px] -top-[140px] h-[420px] w-[420px] rounded-full blur-[28px]"
+        style={{
+          background: "radial-gradient(circle, rgba(74, 64, 224, 0.09), transparent 70%)"
+        }}
+      />
+      <div
+        className="pointer-events-none absolute right-[-100px] top-[220px] h-[360px] w-[360px] rounded-full blur-[28px]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(151, 149, 255, 0.12), transparent 70%)"
+        }}
+      />
 
       <Header activePage="pricing" benefitsHref="/#benefits" />
 
-      <section className={styles.heroSection}>
-        <div className={styles.heroBadge}>
+      <section className={`${siteWidthClass} pb-9 pt-28 text-center max-[780px]:pt-[84px]`}>
+        <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(74,64,224,0.08)] px-3 py-2 text-[0.92rem] font-bold text-[var(--primary)]">
           <Sparkles size={16} />
           Bangla-first pricing
         </div>
-        <h1 className={styles.heroTitle}>
-          সঠিক প্ল্যান বেছে নিন, <span>সফলতা</span> নিশ্চিত করুন
+        <h1 className="mx-auto mt-6 max-w-[12ch] text-[clamp(3rem,6vw,5.8rem)] leading-[1.04] tracking-[-0.05em] max-[520px]:max-w-none max-[520px]:text-[clamp(2.4rem,11vw,3.5rem)]">
+          সঠিক প্ল্যান বেছে নিন,{" "}
+          <span className="italic text-[var(--primary)]">সফলতা</span> নিশ্চিত করুন
         </h1>
-        <p className={styles.heroText}>
+        <p className="mx-auto mt-[18px] max-w-[760px] text-[1.05rem] leading-[1.8] text-[var(--muted)] max-[520px]:text-[0.96rem]">
           আপনার ফ্রিল্যান্সিং ক্যারিয়ারকে আরও গতিশীল করতে আমাদের প্রিমিয়াম টুলস
           ব্যবহার করুন। কোনো লুকানো চার্জ নেই, যেকোনো সময় বাতিলযোগ্য।
         </p>
       </section>
 
-      <section className={styles.pricingGrid} aria-label="Pricing plans">
+      <section
+        className={`${siteWidthClass} grid gap-6 pt-7 md:grid-cols-2 xl:grid-cols-4`}
+        aria-label="Pricing plans"
+      >
         {pricingPlans.map((plan) => (
           <article
             key={plan.name}
-            className={`${styles.planCard} ${plan.featured ? styles.planFeatured : ""}`}
+            className={[
+              surfaceCardClass,
+              "relative grid content-start gap-6 p-7",
+              plan.featured
+                ? "bg-[linear-gradient(180deg,rgba(151,149,255,0.14),rgba(255,255,255,0.96)_30%),var(--surface-ink)] shadow-[0_26px_60px_rgba(74,64,224,0.08)]"
+                : ""
+            ].join(" ")}
           >
-            {plan.featured ? <div className={styles.planBadge}>Most Popular</div> : null}
-
-            <div className={styles.planHeader}>
-              <h2>{plan.name}</h2>
-              <div className={styles.planPrice}>
-                <strong>{plan.price}</strong>
-                <span>{plan.cadence}</span>
+            {plan.featured ? (
+              <div className="absolute right-6 top-[-14px] rounded-full bg-[var(--secondary)] px-3 py-2 text-[0.7rem] font-extrabold uppercase tracking-[0.12em] text-[#f4f1ff]">
+                Most Popular
               </div>
-              <p>{plan.description}</p>
+            ) : null}
+
+            <div className="grid gap-2.5">
+              <h2 className="text-[1.35rem]">{plan.name}</h2>
+              <div className="flex items-baseline gap-2">
+                <strong className="text-[2.5rem] tracking-[-0.05em]">{plan.price}</strong>
+                <span className="text-[var(--muted)]">{plan.cadence}</span>
+              </div>
+              <p className="leading-[1.75] text-[var(--muted)]">{plan.description}</p>
             </div>
 
-            <ul className={styles.planFeatures}>
+            <ul className="grid gap-3.5">
               {plan.points.map((point) => {
                 const Icon = point.enabled ? CheckCircle2 : CircleX;
 
                 return (
                   <li
                     key={point.label}
-                    className={point.enabled ? styles.featureEnabled : styles.featureMuted}
+                    className={`flex items-start gap-2.5 ${
+                      point.enabled ? "text-[var(--ink)]" : "text-[var(--muted)]"
+                    }`}
                   >
-                    <Icon size={18} />
+                    <Icon
+                      size={18}
+                      className={`mt-0.5 shrink-0 ${
+                        point.enabled ? "text-[var(--primary)]" : "text-[var(--outline)]"
+                      }`}
+                    />
                     <span>{point.label}</span>
                   </li>
                 );
@@ -136,7 +174,7 @@ export function PricingPage() {
               href={TELEGRAM_BOT_URL}
               target="_blank"
               rel="noreferrer"
-              className={plan.featured ? styles.primaryButton : styles.secondaryButton}
+              className={plan.featured ? primaryButtonClass : secondaryButtonClass}
             >
               {plan.cta}
             </a>
@@ -144,38 +182,45 @@ export function PricingPage() {
         ))}
       </section>
 
-      <section className={styles.trustSection}>
-        <article className={styles.trustPanel}>
-          <div className={styles.trustCopy}>
-            <h2>কেন আমাদের বেছে নেবেন?</h2>
-            <p>
+      <section className={`${siteWidthClass} mt-24 grid gap-6 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.9fr)]`}>
+        <article
+          className={`${surfaceCardClass} grid gap-7 bg-[linear-gradient(180deg,rgba(151,149,255,0.08),rgba(255,255,255,0.94)),var(--surface-ink)] p-[34px] xl:grid-cols-[minmax(0,1.15fr)_minmax(220px,320px)]`}
+        >
+          <div>
+            <h2 className="text-[2rem] leading-[1.08]">কেন আমাদের বেছে নেবেন?</h2>
+            <p className="mt-4 leading-[1.8] text-[var(--muted)] max-[520px]:text-[0.96rem]">
               আমাদের বটটি বিশেষভাবে ডিজাইন করা হয়েছে Upwork-এর workflow মাথায়
               রেখে। আপনি পাবেন শক্তিশালী proposal structure, faster output, আর
               client-ready messaging যা real conversations শুরু করতে সাহায্য করে।
             </p>
 
-            <div className={styles.statsRow}>
+            <div className="mt-7 flex flex-wrap items-center gap-6">
               {trustStats.map((stat) => (
-                <div key={stat.label} className={styles.statBlock}>
-                  <strong>{stat.value}</strong>
-                  <span>{stat.label}</span>
+                <div key={stat.label} className="grid gap-1.5">
+                  <strong className="text-[2rem] tracking-[-0.05em] text-[var(--primary)]">
+                    {stat.value}
+                  </strong>
+                  <span className="text-[0.78rem] font-extrabold uppercase tracking-[0.08em] text-[var(--muted)]">
+                    {stat.label}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className={styles.trustVisual}>
+          <div className="min-h-[280px] overflow-hidden rounded-3xl">
             <img
+              className="h-full w-full object-cover"
               alt="Team collaborating on software design"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv-Ka2Fx81FE5T6-SdU4Nj51-peKVgIqWBwd28ufo6M03oIpQ-dJzHtB6_UfXFMyec_9mm_Ka97G4ZCkjn2OE4f07wE04dP5V16lgaVmc-2F_6lGJPXTu3OjGZR9yzFnwDq5KdAqzYwqEpe3K_9hazbTuL6ArBG2yeyF3AGrrg7530Dd51wy7FrgyWKyQt_UyCB4zmrnYVqfZNjz69BzImIq7w0BqiVasQ0eN-38z4x3_TdrUxjuLaa28nqLlNSD8d1lQU6uQtO_c"
             />
           </div>
         </article>
 
-        <article className={styles.securityCard}>
+        <article className="grid content-center gap-4 rounded-[32px] bg-[linear-gradient(135deg,var(--primary),var(--secondary))] p-[34px] text-[#f4f1ff] shadow-[0_24px_56px_rgba(112,42,225,0.18)]">
           <ShieldCheck size={46} />
-          <h3>নিরাপদ পেমেন্ট</h3>
-          <p>
+          <h3 className="text-[2rem] leading-[1.08]">নিরাপদ পেমেন্ট</h3>
+          <p className="leading-[1.8] text-[rgba(244,241,255,0.82)] max-[520px]:text-[0.96rem]">
             বিকাশ, নগদ এবং রকেটের মাধ্যমে খুব সহজেই পেমেন্ট সম্পন্ন করতে পারবেন।
             পেমেন্ট পরবর্তী তাৎক্ষণিক access পাওয়া যাবে।
           </p>
