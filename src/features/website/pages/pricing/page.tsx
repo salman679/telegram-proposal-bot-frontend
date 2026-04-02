@@ -83,7 +83,7 @@ const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
 const pillButtonBaseClass =
   "inline-flex min-h-[52px] items-center justify-center rounded-full px-6 py-[14px] font-bold transition duration-200 hover:-translate-y-0.5";
-const primaryButtonClass = `${pillButtonBaseClass} bg-[var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)]`;
+const primaryButtonClass = `${pillButtonBaseClass} [background:var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)]`;
 const secondaryButtonClass = `${pillButtonBaseClass} bg-[var(--surface-strong)] text-[var(--primary)]`;
 
 export function PricingPage() {
@@ -131,7 +131,7 @@ export function PricingPage() {
               surfaceCardClass,
               "relative grid content-start gap-6 p-7",
               plan.featured
-                ? "bg-[linear-gradient(180deg,rgba(151,149,255,0.14),rgba(255,255,255,0.96)_30%),var(--surface-ink)] shadow-[0_26px_60px_rgba(74,64,224,0.08)]"
+                ? "[background:linear-gradient(180deg,rgba(151,149,255,0.14),rgba(255,255,255,0.96)_30%),var(--surface-ink)] shadow-[0_26px_60px_rgba(74,64,224,0.08)]"
                 : ""
             ].join(" ")}
           >
@@ -187,7 +187,7 @@ export function PricingPage() {
 
       <section className={`${siteWidthClass} mt-24 grid gap-6 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.9fr)]`}>
         <article
-          className={`${surfaceCardClass} grid gap-7 bg-[linear-gradient(180deg,rgba(151,149,255,0.08),rgba(255,255,255,0.94)),var(--surface-ink)] p-[34px] xl:grid-cols-[minmax(0,1.15fr)_minmax(220px,320px)]`}
+          className={`${surfaceCardClass} grid gap-7 [background:linear-gradient(180deg,rgba(151,149,255,0.08),rgba(255,255,255,0.94)),var(--surface-ink)] p-[34px] xl:grid-cols-[minmax(0,1.15fr)_minmax(220px,320px)]`}
         >
           <div>
             <h2 className="text-[2rem] leading-[1.08]">কেন আমাদের বেছে নেবেন?</h2>

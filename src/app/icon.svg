@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Upwork Bot BD icon">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4a40e0" />
+      <stop offset="1" stop-color="#9795ff" />
+    </linearGradient>
+    <linearGradient id="glow" x1="18" y1="14" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55" />
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#bg)" />
+  <path d="M16 18C16 15.791 17.791 14 20 14H24C26.209 14 28 15.791 28 18V38C28 42.418 31.582 46 36 46C40.418 46 44 42.418 44 38V14H50V38C50 45.732 43.732 52 36 52C28.268 52 22 45.732 22 38V20H16V18Z" fill="#ffffff" />
+  <circle cx="46" cy="18" r="4" fill="#ffffff" />
+  <path d="M14 10C28 9 42 10 54 18" fill="none" stroke="url(#glow)" stroke-width="4" stroke-linecap="round" />
+</svg>

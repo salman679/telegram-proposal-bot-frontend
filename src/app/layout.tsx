@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   title: SITE_NAME,
   description: SITE_DESCRIPTION,
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg"
+  },
   keywords: [
     "Upwork Bot BD",
     "AI proposal generator",

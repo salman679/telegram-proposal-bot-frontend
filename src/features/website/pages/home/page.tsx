@@ -143,7 +143,7 @@ const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
 const primaryButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full bg-[var(--gradient-primary)] px-6 py-[14px] font-bold text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] transition duration-200 hover:-translate-y-0.5";
+  "inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full [background:var(--gradient-primary)] px-6 py-[14px] font-bold text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] transition duration-200 hover:-translate-y-0.5";
 const secondaryButtonClass =
   "inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--surface-strong)] px-6 py-[14px] font-bold text-[var(--primary)] transition duration-200 hover:-translate-y-0.5";
 const outlineButtonClass =
@@ -366,7 +366,7 @@ export function HomePage() {
               key={plan.name}
               className={`${surfaceCardClass} relative grid gap-[26px] p-8 ${
                 plan.featured
-                  ? "bg-[linear-gradient(180deg,rgba(151,149,255,0.14)_0%,rgba(255,255,255,0.96)_26%),var(--surface-ink)] shadow-[0_28px_64px_rgba(74,64,224,0.08)] lg:-translate-y-3"
+                  ? "[background:linear-gradient(180deg,rgba(151,149,255,0.14)_0%,rgba(255,255,255,0.96)_26%),var(--surface-ink)] shadow-[0_28px_64px_rgba(74,64,224,0.08)] lg:-translate-y-3"
                   : ""
               }`}
             >

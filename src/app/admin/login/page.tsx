@@ -45,7 +45,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         }}
       />
       <section className="relative z-[1] grid w-full max-w-[1120px] gap-6 rounded-[36px] bg-[rgba(255,255,255,0.8)] p-6 shadow-[var(--shadow-soft)] backdrop-blur-[24px] lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-[28px] bg-[linear-gradient(160deg,rgba(74,64,224,0.06),rgba(112,42,225,0.02)),var(--surface-low)] p-8 max-[640px]:p-6">
+        <div className="rounded-[28px] [background:linear-gradient(160deg,rgba(74,64,224,0.06),rgba(112,42,225,0.02)),var(--surface-low)] p-8 max-[640px]:p-6">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[rgba(74,64,224,0.08)] px-3 py-2 text-[0.92rem] text-[var(--primary)]">
             <ShieldCheck size={16} />
             Protected analytics access
@@ -123,7 +123,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
 
           <button
             type="submit"
-            className="cursor-pointer rounded-full border-none bg-[var(--gradient-primary)] px-[18px] py-[15px] font-bold text-[#f4f1ff] shadow-[var(--shadow-light)]"
+            className="cursor-pointer rounded-full border-none [background:var(--gradient-primary)] px-[18px] py-[15px] font-bold text-[#f4f1ff] shadow-[var(--shadow-light)]"
           >
             Enter dashboard
           </button>

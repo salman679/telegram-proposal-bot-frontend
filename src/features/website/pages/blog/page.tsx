@@ -20,7 +20,7 @@ const toneClasses = {
   tertiary: "text-[var(--tertiary)]"
 } as const;
 const primaryButtonClass =
-  "inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full bg-[var(--gradient-primary)] px-6 py-[14px] font-bold text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] transition duration-200 hover:-translate-y-0.5";
+  "inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full [background:var(--gradient-primary)] px-6 py-[14px] font-bold text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] transition duration-200 hover:-translate-y-0.5";
 
 export function BlogPage() {
   const categories = getBlogCategories();
@@ -162,7 +162,7 @@ export function BlogPage() {
         </div>
       </section>
 
-      <section className={`${siteWidthClass} mt-24 rounded-[32px] bg-[linear-gradient(180deg,rgba(151,149,255,0.07),rgba(255,255,255,0.98)),var(--surface-ink)] px-[clamp(20px,4vw,56px)] py-[54px] text-center shadow-[var(--shadow-light)] max-[720px]:mt-[72px] max-[720px]:px-5 max-[720px]:py-9`}>
+      <section className={`${siteWidthClass} mt-24 rounded-[32px] [background:linear-gradient(180deg,rgba(151,149,255,0.07),rgba(255,255,255,0.98)),var(--surface-ink)] px-[clamp(20px,4vw,56px)] py-[54px] text-center shadow-[var(--shadow-light)] max-[720px]:mt-[72px] max-[720px]:px-5 max-[720px]:py-9`}>
         <div className="mx-auto mb-[26px] grid h-20 w-20 place-items-center rounded-[28px] bg-[rgba(74,64,224,0.08)] text-[var(--primary)]">
           <Mail size={34} />
         </div>

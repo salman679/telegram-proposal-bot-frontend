@@ -56,8 +56,10 @@ const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
 const pillButtonBaseClass =
   "inline-flex min-h-[52px] items-center justify-center rounded-full px-6 py-[14px] font-bold transition duration-200 hover:-translate-y-0.5";
-const primaryButtonClass = `${pillButtonBaseClass} bg-[var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)]`;
-const secondaryButtonClass = `${pillButtonBaseClass} bg-[var(--surface-ink)] text-[var(--ink)]`;
+const primaryButtonClass = `${pillButtonBaseClass} min-w-[220px] [background:var(--gradient-primary)] text-[#f4f1ff] shadow-[0_16px_36px_rgba(74,64,224,0.18)] max-[640px]:w-full`;
+const secondaryButtonClass = `${pillButtonBaseClass} min-w-[220px] border border-[rgba(74,64,224,0.1)] bg-[var(--surface-low)] text-[var(--ink)] shadow-[0_14px_30px_rgba(74,64,224,0.08)] max-[640px]:w-full`;
+const spotlightButtonClass =
+  "inline-flex min-h-[58px] w-full items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(232,236,255,0.94))] px-5 py-[15px] text-[1rem] font-extrabold tracking-[0.01em] text-[#1f2553] shadow-[0_16px_34px_rgba(11,16,32,0.24)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_42px_rgba(11,16,32,0.3)]";
 const toneClasses = {
   primary: "bg-[rgba(74,64,224,0.12)] text-[var(--primary)]",
   secondary: "bg-[rgba(112,42,225,0.12)] text-[var(--secondary)]",
@@ -237,7 +239,8 @@ export function HowItWorksPage() {
               href={TELEGRAM_BOT_URL}
               target="_blank"
               rel="noreferrer"
-              className={`${pillButtonBaseClass} bg-white text-[var(--primary)]`}
+              className={spotlightButtonClass}
+              aria-label="নোটিফিকেশন অন করুন"
             >
               নোটিফিকেশন অন করুন
             </a>
@@ -246,11 +249,11 @@ export function HowItWorksPage() {
       </section>
 
       <section className={`${siteWidthClass} mt-20`}>
-        <div className={`${surfaceCardClass} bg-[linear-gradient(180deg,rgba(217,221,224,0.25),rgba(255,255,255,0.96)),var(--surface-ink)] px-10 py-[52px] text-center max-[780px]:px-[22px] max-[780px]:py-[32px]`}>
+        <div className={`${surfaceCardClass} [background:linear-gradient(180deg,rgba(217,221,224,0.25),rgba(255,255,255,0.96)),var(--surface-ink)] px-10 py-[52px] text-center max-[780px]:px-[22px] max-[780px]:py-[32px]`}>
           <h2 className="text-[clamp(2rem,4vw,3rem)] leading-[1.12]">
             আপনি কি প্রস্তুত আপনার ফ্রিল্যান্সিং সফর শুরু করতে?
           </h2>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
               href={TELEGRAM_BOT_URL}
               target="_blank"

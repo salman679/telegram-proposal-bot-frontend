@@ -150,12 +150,14 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
         </article>
 
         <aside className="grid content-start gap-7 max-[1180px]:grid-cols-2 max-[780px]:grid-cols-1">
-          <section className="sticky top-[120px] overflow-hidden rounded-[30px] bg-[var(--gradient-primary)] shadow-[var(--shadow-light)] max-[1180px]:static">
+          <section className="overflow-hidden rounded-[30px] [background:var(--gradient-primary)] shadow-[0_24px_56px_rgba(74,64,224,0.18)]">
+            <div className="pointer-events-none absolute right-[-48px] top-[-56px] h-40 w-40 rounded-full bg-[rgba(255,255,255,0.14)] blur-[18px]" />
+            <div className="pointer-events-none absolute bottom-[-72px] left-[-36px] h-32 w-32 rounded-full bg-[rgba(255,255,255,0.1)] blur-[18px]" />
             <div className="relative z-[1] grid gap-4 p-8 text-[#f4f1ff]">
               <h2 className="text-[1.85rem] leading-[1.2]" style={banglaFontFamily}>
                 আমাদের টেলিগ্রাম কমিউনিটিতে যুক্ত হন
               </h2>
-              <p className="leading-[1.8] text-[rgba(244,241,255,0.82)]">
+              <p className="leading-[1.8] text-[rgba(244,241,255,0.88)]">
                 প্রতিদিন ফ্রিল্যান্সিং টিপস, নতুন জব আপডেট, আর প্রপোজাল স্ট্র্যাটেজি
                 পেতে এখনই জয়েন করুন।
               </p>
