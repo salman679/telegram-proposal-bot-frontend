@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hind_Siliguri, Manrope } from "next/font/google";
+import { Analytics } from '@vercel/analytics/next';
 
 import "@/app/globals.css";
 import { StructuredData } from "@/features/website/components/structured-data";
@@ -88,6 +89,7 @@ export default function RootLayout({
       <body>
         <StructuredData data={getSiteSchemas()} />
         {children}
+        <Analytics />
       </body>
     </html>
   );
