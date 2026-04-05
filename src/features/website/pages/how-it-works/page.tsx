@@ -62,7 +62,7 @@ const toneClasses = {
 
 export function HowItWorksPage() {
   return (
-    <main className="relative min-h-screen overflow-x-clip px-[clamp(18px,3vw,36px)] pb-24 pt-6">
+    <main className="relative min-h-screen overflow-x-clip px-[clamp(18px,3vw,36px)] pt-6">
       <div
         className="pointer-events-none absolute -left-[100px] -top-[120px] h-[420px] w-[420px] rounded-full blur-[28px]"
         style={{
