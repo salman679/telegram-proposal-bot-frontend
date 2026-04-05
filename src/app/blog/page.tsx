@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { StructuredData } from "@/features/website/components/structured-data";
 import { SITE_NAME } from "@/features/website/config/site";
 import { absoluteUrl, buildPageMetadata } from "@/features/website/lib/seo";
-import { getBlogIndexArticles } from "@/features/website/pages/blog/data";
+import { getBlogArticles } from "@/features/website/pages/blog/data";
 import { BlogPage } from "@/features/website/pages/blog/page";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -20,7 +20,7 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function BlogRoutePage() {
-  const articles = getBlogIndexArticles();
+  const articles = getBlogArticles();
 
   return (
     <>

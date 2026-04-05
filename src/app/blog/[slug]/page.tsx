@@ -5,6 +5,7 @@ import { StructuredData } from "@/features/website/components/structured-data";
 import { SITE_NAME } from "@/features/website/config/site";
 import { absoluteUrl, buildPageMetadata } from "@/features/website/lib/seo";
 import {
+  BLOG_LEVEL_LABELS,
   getBlogArticleBySlug,
   getBlogArticleSlugs
 } from "@/features/website/pages/blog/data";
@@ -42,6 +43,8 @@ export async function generateMetadata({
     image: article.image,
     keywords: [
       article.category,
+      BLOG_LEVEL_LABELS[article.level],
+      article.trackKey,
       article.author.name,
       "Upwork blog",
       "Bangla freelancer article"
@@ -74,7 +77,14 @@ export async function generateMetadata({
       ],
       authors: [article.author.name],
       section: article.category,
-      tags: [article.category, "Upwork", "Freelancing", "AI proposals"]
+      tags: [
+        article.category,
+        BLOG_LEVEL_LABELS[article.level],
+        article.trackKey,
+        "Upwork",
+        "Freelancing",
+        "AI proposals"
+      ]
     }
   };
 }

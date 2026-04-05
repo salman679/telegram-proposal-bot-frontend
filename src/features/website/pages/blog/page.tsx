@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowRight, Mail, MoveRight } from "lucide-react";
 
 import { Button } from "@/features/website/components/button";
@@ -9,6 +12,7 @@ import {
   TELEGRAM_BOT_URL
 } from "@/features/website/config/site";
 import {
+  BLOG_LEVEL_LABELS,
   getBlogCategories,
   getBlogIndexArticles,
   getFeaturedBlogArticle
@@ -20,11 +24,32 @@ const toneClasses = {
   secondary: "text-[var(--secondary)]",
   tertiary: "text-[var(--tertiary)]"
 } as const;
+const levelClasses = {
+  beginner:
+    "bg-[rgba(74,64,224,0.08)] text-[var(--primary)] ring-1 ring-[rgba(74,64,224,0.12)]",
+  mid:
+    "bg-[rgba(112,42,225,0.08)] text-[var(--secondary)] ring-1 ring-[rgba(112,42,225,0.14)]",
+  advanced:
+    "bg-[rgba(0,98,140,0.08)] text-[var(--tertiary)] ring-1 ring-[rgba(0,98,140,0.16)]"
+} as const;
 
 export function BlogPage() {
   const categories = getBlogCategories();
   const articles = getBlogIndexArticles();
   const featuredArticle = getFeaturedBlogArticle();
+  const [selectedCategory, setSelectedCategory] = useState<(typeof categories)[number]>(
+    "All Articles"
+  );
+
+  const filteredArticles =
+    selectedCategory === "All Articles"
+      ? articles
+      : articles.filter((article) => article.category === selectedCategory);
+  const visibleFeaturedArticle =
+    featuredArticle &&
+    (selectedCategory === "All Articles" || featuredArticle.category === selectedCategory)
+      ? featuredArticle
+      : null;
 
   return (
     <main className="relative min-h-screen overflow-x-clip px-[clamp(18px,3vw,36px)] pb-28 pt-6">
@@ -47,17 +72,17 @@ export function BlogPage() {
         <span className="inline-flex w-fit rounded-full bg-[rgba(74,64,224,0.1)] px-[14px] py-2 text-[0.76rem] font-extrabold uppercase tracking-[0.16em] text-[var(--primary)]">
           Learning Hub
         </span>
-        <div className="mt-[22px] max-w-[720px]">
+        <div className="mt-[22px] max-w-[760px]">
           <h1 className="text-[clamp(3rem,6vw,5.6rem)] leading-[0.98] tracking-[-0.05em]">
             Master the Art of <br />
             <span className="bg-[linear-gradient(135deg,var(--primary),var(--secondary))] bg-clip-text text-transparent">
               Freelance Automation
             </span>
           </h1>
-          <p className="mt-[22px] max-w-[58ch] text-[1.08rem] leading-[1.8] text-[var(--muted)]">
-            আপওয়ার্ক বট বিডি-র সাথে আপনার ফ্রিল্যান্সিং ক্যারিয়ারকে আরও গতিশীল
-            করুন। সঠিক কৌশল এবং এআই টুলস ব্যবহারের মাধ্যমে সফলতার নতুন শিখরে
-            পৌঁছান।
+          <p className="mt-[22px] max-w-[60ch] text-[1.08rem] leading-[1.8] text-[var(--muted)]">
+            আপওয়ার্ক বট বিডির সাথে আপনার freelancing journey-কে আরও organised করুন।
+            কাজ জেতার strategy, profile polish, proposal system, আর client psychology
+            নিয়ে এমন practical guide পড়ুন যা পড়েই কাজে লাগানো যায়।
           </p>
         </div>
       </section>
@@ -67,13 +92,15 @@ export function BlogPage() {
         aria-label="Article categories"
       >
         <div className="flex gap-3 overflow-x-auto px-0.5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <Button
               key={category}
               type="button"
-              variant={index === 0 ? "primary" : "secondary"}
+              variant={selectedCategory === category ? "primary" : "secondary"}
               size="sm"
               className="shrink-0"
+              aria-pressed={selectedCategory === category}
+              onClick={() => setSelectedCategory(category)}
             >
               {category}
             </Button>
@@ -83,7 +110,7 @@ export function BlogPage() {
 
       <section className={`${siteWidthClass} pt-[18px]`}>
         <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-          {articles.map((article) => (
+          {filteredArticles.map((article) => (
             <article
               key={article.slug}
               className="group overflow-hidden rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]"
@@ -99,10 +126,17 @@ export function BlogPage() {
                 <div className="flex flex-wrap items-center gap-2.5">
                   <span
                     className={`inline-flex items-center justify-center py-1 text-[0.74rem] font-extrabold uppercase tracking-[0.14em] ${
-                      toneClasses[article.tone as keyof typeof toneClasses]
+                      toneClasses[article.tone]
                     }`}
                   >
                     {article.category}
+                  </span>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-[0.72rem] font-extrabold tracking-[0.02em] ${
+                      levelClasses[article.level]
+                    }`}
+                  >
+                    {BLOG_LEVEL_LABELS[article.level]}
                   </span>
                   <span className="h-1 w-1 rounded-full bg-[rgba(171,173,175,0.7)]" />
                   <span className="text-[0.84rem] text-[var(--muted)]">
@@ -117,40 +151,42 @@ export function BlogPage() {
                   href={`/blog/${article.slug}`}
                   className="inline-flex w-fit items-center gap-2.5 font-extrabold text-[var(--primary)] transition duration-200 hover:-translate-y-0.5"
                 >
-                  Read More
+                  বিস্তারিত পড়ুন
                   <ArrowRight size={18} />
                 </Link>
               </div>
             </article>
           ))}
 
-          {featuredArticle ? (
+          {visibleFeaturedArticle ? (
             <article className="group relative min-h-[420px] overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,var(--primary),var(--secondary))] shadow-[var(--shadow-light)] lg:col-span-2 max-[720px]:min-h-[360px] xl:col-span-2">
               <div className="absolute inset-0">
                 <img
                   className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.06]"
-                  alt={featuredArticle.imageAlt}
-                  src={featuredArticle.image}
+                  alt={visibleFeaturedArticle.imageAlt}
+                  src={visibleFeaturedArticle.image}
                 />
               </div>
 
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,47,49,0.04),rgba(44,47,49,0.58)),linear-gradient(135deg,rgba(74,64,224,0.28),rgba(112,42,225,0.2))]" />
 
               <div className="relative z-[1] grid h-full max-w-[620px] content-end gap-4 p-[38px] text-white">
-                <span className="inline-flex w-fit rounded-full bg-[rgba(255,255,255,0.18)] px-3 py-2 text-[0.72rem] font-extrabold uppercase tracking-[0.16em] backdrop-blur-[14px]">
-                  {featuredArticle.featured?.badge}
-                </span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="inline-flex w-fit rounded-full bg-[rgba(255,255,255,0.18)] px-3 py-2 text-[0.72rem] font-extrabold uppercase tracking-[0.16em] backdrop-blur-[14px]">
+                    {visibleFeaturedArticle.featured?.badge}
+                  </span>
+                  <span className="inline-flex rounded-full bg-[rgba(255,255,255,0.16)] px-3 py-2 text-[0.72rem] font-extrabold tracking-[0.02em] backdrop-blur-[14px]">
+                    {BLOG_LEVEL_LABELS[visibleFeaturedArticle.level]}
+                  </span>
+                </div>
                 <h2 className="text-[clamp(1.8rem,3vw,2.7rem)] leading-[1.08] tracking-[-0.04em]">
-                  {featuredArticle.featured?.headline}
+                  {visibleFeaturedArticle.featured?.headline}
                 </h2>
                 <p className="leading-[1.8] text-[rgba(255,255,255,0.84)]">
-                  {featuredArticle.featured?.description}
+                  {visibleFeaturedArticle.featured?.description}
                 </p>
-                <Button
-                  href={`/blog/${featuredArticle.slug}`}
-                  variant="inverted"
-                >
-                  {featuredArticle.featured?.ctaLabel}
+                <Button href={`/blog/${visibleFeaturedArticle.slug}`} variant="inverted">
+                  {visibleFeaturedArticle.featured?.ctaLabel}
                   <MoveRight size={18} />
                 </Button>
               </div>
@@ -167,8 +203,8 @@ export function BlogPage() {
           Stay Ahead of the Curve
         </h2>
         <p className="mx-auto mt-4 max-w-[640px] leading-[1.8] text-[var(--muted)]">
-          Get the latest Upwork tips in your inbox. আপওয়ার্কের লেটেস্ট টিপস এবং
-          আমাদের নতুন ফিচার সম্পর্কে আপডেট থাকতে আজই সাবস্ক্রাইব করুন।
+          Get the latest Upwork tips in your inbox. আপওয়ার্কের latest tip, proposal
+          framework, আর new article update পেতে চাইলে Telegram bot-এ join করুন।
         </p>
 
         <div className="mx-auto mt-[30px] flex max-w-[640px] items-center gap-3 rounded-full bg-[rgba(255,255,255,0.94)] p-2.5 shadow-[0_16px_40px_rgba(74,64,224,0.08)] max-[720px]:flex-col max-[720px]:items-stretch max-[720px]:rounded-[26px]">

@@ -9,7 +9,11 @@ import {
   TELEGRAM_BOT_URL
 } from "@/features/website/config/site";
 
-import { type BlogArticle, getPopularBlogArticles } from "./data";
+import {
+  BLOG_LEVEL_LABELS,
+  type BlogArticle,
+  getPopularBlogArticles
+} from "./data";
 import { BlogArticleActions } from "./components/article-actions";
 
 interface BlogDetailPageProps {
@@ -18,6 +22,14 @@ interface BlogDetailPageProps {
 
 const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const banglaFontFamily = { fontFamily: "var(--font-bangla), sans-serif" };
+const levelClasses = {
+  beginner:
+    "bg-[rgba(74,64,224,0.08)] text-[var(--primary)] ring-1 ring-[rgba(74,64,224,0.12)]",
+  mid:
+    "bg-[rgba(112,42,225,0.08)] text-[var(--secondary)] ring-1 ring-[rgba(112,42,225,0.14)]",
+  advanced:
+    "bg-[rgba(0,98,140,0.08)] text-[var(--tertiary)] ring-1 ring-[rgba(0,98,140,0.16)]"
+} as const;
 
 function renderContentBlock(article: BlogArticle) {
   return article.content.map((block, index) => {
@@ -94,7 +106,9 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
 
       <Header activePage="blog" benefitsHref="/#benefits" />
 
-      <div className={`${siteWidthClass} grid gap-7 pt-24 xl:grid-cols-[minmax(0,68px)_minmax(0,1.8fr)_minmax(310px,0.95fr)] max-[1180px]:grid-cols-1 max-[780px]:pt-[72px]`}>
+      <div
+        className={`${siteWidthClass} grid gap-7 pt-24 xl:grid-cols-[minmax(0,68px)_minmax(0,1.8fr)_minmax(310px,0.95fr)] max-[1180px]:grid-cols-1 max-[780px]:pt-[72px]`}
+      >
         <aside className="max-[1180px]:hidden">
           <div className="sticky top-[132px] flex justify-center">
             <BlogArticleActions articleSlug={article.slug} articleTitle={article.title} />
@@ -106,6 +120,13 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
             <div className="flex flex-wrap items-center gap-[14px]">
               <span className="inline-flex items-center rounded-full bg-[rgba(151,149,255,0.22)] px-[14px] py-2 text-[0.9rem] font-extrabold tracking-[0.06em] text-[var(--primary)]">
                 {article.detailLabel}
+              </span>
+              <span
+                className={`inline-flex rounded-full px-3 py-2 text-[0.84rem] font-extrabold tracking-[0.02em] ${
+                  levelClasses[article.level]
+                }`}
+              >
+                {BLOG_LEVEL_LABELS[article.level]}
               </span>
               <span className="text-[0.92rem] font-semibold text-[var(--muted)]">
                 {article.readTime}
@@ -151,7 +172,7 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
         </article>
 
         <aside className="grid content-start gap-7 max-[1180px]:grid-cols-2 max-[780px]:grid-cols-1">
-          <section className="overflow-hidden rounded-[30px] [background:var(--gradient-primary)] shadow-[0_24px_56px_rgba(74,64,224,0.18)]">
+          <section className="relative overflow-hidden rounded-[30px] [background:var(--gradient-primary)] shadow-[0_24px_56px_rgba(74,64,224,0.18)]">
             <div className="pointer-events-none absolute right-[-48px] top-[-56px] h-40 w-40 rounded-full bg-[rgba(255,255,255,0.14)] blur-[18px]" />
             <div className="pointer-events-none absolute bottom-[-72px] left-[-36px] h-32 w-32 rounded-full bg-[rgba(255,255,255,0.1)] blur-[18px]" />
             <div className="relative z-[1] grid gap-4 p-8 text-[#f4f1ff]">
@@ -159,8 +180,8 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                 আমাদের টেলিগ্রাম কমিউনিটিতে যুক্ত হন
               </h2>
               <p className="leading-[1.8] text-[rgba(244,241,255,0.88)]">
-                প্রতিদিন ফ্রিল্যান্সিং টিপস, নতুন জব আপডেট, আর প্রপোজাল স্ট্র্যাটেজি
-                পেতে এখনই জয়েন করুন।
+                প্রতিদিন freelancing tips, নতুন job update, আর proposal strategy পেতে
+                এখনই join করুন।
               </p>
               <Button
                 href={TELEGRAM_BOT_URL}
@@ -170,8 +191,8 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
                 fullWidth
                 className="justify-center gap-2.5 shadow-[0_14px_28px_rgba(11,16,32,0.14)]"
               >
-                <Send size={16} className="text-[var(--primary)]" />
-                টেলিগ্রামে যুক্ত হোন
+                <Send size={16} />
+                টেলিগ্রামে যুক্ত হন
               </Button>
             </div>
           </section>
@@ -182,7 +203,7 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
               style={banglaFontFamily}
             >
               <TrendingUp size={20} />
-              জনপ্রিয় আর্টিকেল
+              জনপ্রিয় আর্টিকেল
             </h2>
 
             <div className="grid gap-[18px]">
@@ -213,10 +234,7 @@ export function BlogDetailPage({ article }: BlogDetailPageProps) {
           </section>
 
           <div className="flex">
-            <Button
-              href="/blog"
-              variant="secondary"
-            >
+            <Button href="/blog" variant="secondary">
               <MoveLeft size={18} />
               সব আর্টিকেলে ফিরে যান
             </Button>
