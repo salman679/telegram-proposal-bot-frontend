@@ -18,6 +18,7 @@ import {
 
 import { Button } from "@/features/website/components/button";
 import { Header } from "@/features/website/components/header";
+import { getHomepageBlogArticles } from "@/features/website/pages/blog/data";
 import {
   SITE_CONTAINER_CLASS,
   TELEGRAM_BOT_URL
@@ -113,33 +114,6 @@ const pricingPlans = [
   }
 ];
 
-const articles = [
-  {
-    category: "Strategy",
-    tone: "primary",
-    title: "২০২৪ সালে আপওয়ার্কে জব পাওয়ার সেরা ৫টি কৌশল",
-    text: "বর্তমান প্রতিযোগিতামূলক বাজারে আপনার প্রোফাইলটি কিভাবে সাজাবেন এবং proposal positioning কীভাবে উন্নত করবেন।",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAZrzwqE2WdNXRjnFRuEfJJxczkesNzAHLFVDeOQetPrndHwYODXhOtFo-uo9EI2NAHFJkKoxQ3_2N_EB1C1Y6Cp6zGSUmqhYYd9ffKx3QY7l20qwY99MPrqXA54Mg6ZCWEcw94xNrkd7wT9jDiNEjpfOuPFj9bm5FfK1EZMdgomE-ydki1e81CfqxW5UJWZ8ovrOjSowZOmDd9_hjNdCjXcLC9pVfHWuHq00wpSJMLmeoza7vtTqN2AaKQzteck0bb5mtQoncO9jQ"
-  },
-  {
-    category: "AI Tools",
-    tone: "secondary",
-    title: "কিভাবে AI দিয়ে আপনার প্রপোজালকে আরও পার্সোনালাইজড করবেন",
-    text: "শুধু copy-paste নয়, client intent বুঝে proposal personalize করার practical workflow দেখুন।",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBaoITZ04uT-aiHfZ_nKVp1bxLZLVBSgzqjCPd8DJ_Z186ohS_cqr2vnssJCr9pE0pGbRi8ezDecFJz2d3qkF0S4AMChTlQDxtOJpq7b9LNZZsBVd_at4oLxnsiY4nGaQVW1xeZ0diU-cnfp83seZQ96Vela4u5prRt0A4Cfyxsolrm2sbnkJCr5Sg-WgY8kzLgdJm6HeIOi1-T-vr0CXpHNbxnX2qc8Hznc0Lgv_rHhy8OC6xH4A0gTXTT-W7iB6b7YhpMaXWUgXM"
-  },
-  {
-    category: "Community",
-    tone: "tertiary",
-    title: "বাংলাদেশী ফ্রিল্যান্সারদের সফলতার গল্প: একজন টপ রেটেড সেলারের অভিজ্ঞতা",
-    text: "শূন্য থেকে শুরু করে steady pipeline তৈরি করার বাস্তব যাত্রা, mistakes, আর lessons learned।",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDS6P-RhYoWSaUKYdkKsd8NdUGSL60ZijL3ONz1iQ6DK1QEjt1-ZSBp7uu-5HEkNi7anAyn38aKw1sv9lOcHyD188govH8896PcqNCtEwSZbgC9OFqBJcWcxfxIz-dEcPCkd5PQ--DiQkf8l_7ghbacrAwaq8akQbuZ7_ICX7TvCoUPby2gZFFyHh68i5uS3kVSBQn4kgvaAnzJg02b9z-U6nqOdsIBqzXId5doePgRaLAb4K8oCmcOM3kzx5EI48x_83f-RvNtBMc"
-  }
-];
-
 const siteWidthClass = `relative z-[1] ${SITE_CONTAINER_CLASS}`;
 const surfaceCardClass =
   "rounded-[32px] bg-[var(--surface-ink)] shadow-[var(--shadow-light)]";
@@ -150,6 +124,8 @@ const toneClasses = {
 } as const;
 
 export function HomePage() {
+  const articles = getHomepageBlogArticles();
+
   return (
     <main className="relative overflow-x-clip px-[clamp(18px,3vw,36px)] pb-28 pt-6">
       <div
@@ -423,21 +399,39 @@ export function HomePage() {
 
         <div className="grid gap-6 lg:grid-cols-3">
           {articles.map((article) => (
-            <article key={article.title} className={`${surfaceCardClass} overflow-hidden`}>
-              <img className="h-[220px] w-full object-cover" alt={article.title} src={article.image} />
+            <article key={article.slug} className={`${surfaceCardClass} overflow-hidden`}>
+              <Link href={`/blog/${article.slug}`} className="block overflow-hidden">
+                <img
+                  className="h-[220px] w-full object-cover transition duration-500 hover:scale-[1.04]"
+                  alt={article.imageAlt}
+                  src={article.image}
+                />
+              </Link>
               <div className="grid gap-[14px] p-6">
-                <span
-                  className={`inline-flex w-fit items-center rounded-full px-3 py-2 text-[0.9rem] font-bold ${
-                    toneClasses[article.tone as keyof typeof toneClasses]
-                  }`}
+                <div className="flex flex-wrap items-center gap-3">
+                  <span
+                    className={`inline-flex w-fit items-center rounded-full px-3 py-2 text-[0.9rem] font-bold ${
+                      toneClasses[article.tone]
+                    }`}
+                  >
+                    {article.category}
+                  </span>
+                  <span className="text-[0.84rem] text-[var(--muted)]">{article.publishedAt}</span>
+                </div>
+                <Link
+                  href={`/blog/${article.slug}`}
+                  className="transition duration-200 hover:text-[var(--primary)]"
                 >
-                  {article.category}
-                </span>
-                <h3 className="text-[1.2rem]">{article.title}</h3>
-                <p className="leading-[1.8] text-[var(--muted)]">{article.text}</p>
-                <a href="#" className="font-bold text-[var(--primary)]">
-                  পড়ুন →
-                </a>
+                  <h3 className="text-[1.2rem]">{article.title}</h3>
+                </Link>
+                <p className="leading-[1.8] text-[var(--muted)]">{article.excerpt}</p>
+                <Link
+                  href={`/blog/${article.slug}`}
+                  className="inline-flex w-fit items-center gap-2 font-bold text-[var(--primary)] transition duration-200 hover:gap-3"
+                >
+                  পড়ুন
+                  <ArrowRight size={16} />
+                </Link>
               </div>
             </article>
           ))}
