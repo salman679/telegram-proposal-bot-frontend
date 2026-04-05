@@ -255,7 +255,7 @@ export function HowItWorksPage() {
               variant="primary"
               className="min-w-[220px] max-[640px]:w-full"
             >
-              এখনই শুরু করুন - ফ্রি
+              <span className="!text-white">এখনই শুরু করুন - ফ্রি</span>
             </Button>
             <Button
               href="/admin/login"
