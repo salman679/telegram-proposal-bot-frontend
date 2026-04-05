@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/features/website/components/button";
+import { Footer } from "@/features/website/components/footer";
 import { Header } from "@/features/website/components/header";
-import { MinimalFooter } from "@/features/website/components/minimal-footer";
 import {
   SITE_CONTAINER_CLASS,
   TELEGRAM_BOT_URL
@@ -268,13 +268,7 @@ export function HowItWorksPage() {
         </div>
       </section>
 
-      <MinimalFooter
-        links={[
-          { href: "/pricing", label: "Pricing" },
-          { href: "/admin/login", label: "Admin Login" },
-          { href: TELEGRAM_BOT_URL, label: "Open Telegram Bot", external: true }
-        ]}
-      />
+      <Footer />
     </main>
   );
 }
