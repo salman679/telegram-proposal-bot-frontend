@@ -12,23 +12,6 @@ import {
 } from "./model";
 import { midLevelArticles } from "./mid";
 
-export {
-  blogCategories,
-  BLOG_LEVEL_LABELS,
-  type BlogArticle,
-  type BlogArticleAuthor,
-  type BlogArticleContentBlock,
-  type BlogArticleLevel,
-  type BlogArticleTone,
-  type BlogTrackKey
-};
-
-const blogArticles: BlogArticle[] = [
-  ...beginnerArticles,
-  ...midLevelArticles,
-  ...advancedArticles
-].sort((left, right) => parseBlogPublishedAt(right.publishedAt) - parseBlogPublishedAt(left.publishedAt));
-
 const BANGLA_MONTH_INDEX: Record<string, number> = {
   জানুয়ারি: 0,
   ফেব্রুয়ারি: 1,
@@ -59,6 +42,23 @@ function parseBlogPublishedAt(publishedAt: string) {
 
   return new Date(year, monthIndex, day).getTime();
 }
+
+export {
+  blogCategories,
+  BLOG_LEVEL_LABELS,
+  type BlogArticle,
+  type BlogArticleAuthor,
+  type BlogArticleContentBlock,
+  type BlogArticleLevel,
+  type BlogArticleTone,
+  type BlogTrackKey
+};
+
+const blogArticles: BlogArticle[] = [
+  ...beginnerArticles,
+  ...midLevelArticles,
+  ...advancedArticles
+].sort((left, right) => parseBlogPublishedAt(right.publishedAt) - parseBlogPublishedAt(left.publishedAt));
 
 const articleOrder = new Map(blogArticles.map((article, index) => [article.slug, index]));
 
