@@ -24,9 +24,7 @@ const quickLinks: FooterLink[] = [
 
 const supportLinks: FooterLink[] = [
   { href: "/pricing", label: "Plans" },
-  { href: "/admin/login", label: "Admin Login" },
-  { href: "/blog", label: "FAQs" },
-  { href: "/how-it-works", label: "Bangla Interface" }
+  { href: "/blog", label: "FAQs" }
 ];
 
 function FooterLinkList({ links }: { links: FooterLink[] }) {

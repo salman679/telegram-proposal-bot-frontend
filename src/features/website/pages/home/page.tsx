@@ -495,15 +495,9 @@ export function HomePage() {
             <Link href="/pricing" className="text-[var(--muted)]">
               Plans
             </Link>
-            <Link href="/admin/login" className="text-[var(--muted)]">
-              Admin Login
-            </Link>
             <Link href="/blog" className="text-[var(--muted)]">
               FAQs
             </Link>
-            <a href="#benefits" className="text-[var(--muted)]">
-              Bangla Interface
-            </a>
           </div>
 
           <div className="grid gap-3">
