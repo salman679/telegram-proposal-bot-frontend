@@ -237,7 +237,7 @@ export function HowItWorksPage() {
               className="min-h-[58px] text-[1rem]"
               aria-label="নোটিফিকেশন অন করুন"
             >
-              নোটিফিকেশন অন করুন
+              <span className="!text-[#1f2553]">নোটিফিকেশন অন করুন</span>
             </Button>
           </div>
         </div>

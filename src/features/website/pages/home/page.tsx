@@ -17,9 +17,11 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/features/website/components/button";
+import { FooterNewsletterForm } from "@/features/website/components/footer-newsletter-form";
 import { Header } from "@/features/website/components/header";
 import { getHomepageBlogArticles } from "@/features/website/pages/blog/data";
 import {
+  CONTACT_EMAIL,
   SITE_CONTAINER_CLASS,
   TELEGRAM_BOT_URL
 } from "@/features/website/config/site";
@@ -452,10 +454,23 @@ export function HomePage() {
             <p className="leading-[1.8] text-[var(--muted)]">
               বাংলাদেশী ফ্রিল্যান্সারদের ক্ষমতায়নের লক্ষ্যে তৈরি একটি আধুনিক AI সলিউশন।
             </p>
-            <div className="flex items-center gap-4">
-              <Mail size={18} />
-              <MessageCircle size={18} />
-              <Send size={18} />
+            <div className="flex items-center gap-4 text-[var(--muted)]">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                aria-label="Email ProposalPro"
+                className="inline-flex items-center transition duration-200 hover:text-[var(--primary)]"
+              >
+                <Mail size={18} />
+              </a>
+              <a
+                href={TELEGRAM_BOT_URL}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Open ProposalPro bot on Telegram"
+                className="inline-flex items-center transition duration-200 hover:text-[var(--primary)]"
+              >
+                <Bot size={18} />
+              </a>
             </div>
           </div>
 
@@ -496,16 +511,7 @@ export function HomePage() {
             <p className="leading-[1.8] text-[var(--muted)]">
               সেরা টিপসগুলো সরাসরি আপনার ইনবক্সে পেতে সাবস্ক্রাইব করুন।
             </p>
-            <div className="flex gap-2.5 max-[780px]:flex-col">
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full rounded-2xl border border-transparent bg-[var(--surface-highest)] px-4 py-[14px] text-[var(--ink)] outline-none focus:border-[rgba(74,64,224,0.4)] focus:shadow-[0_0_0_6px_rgba(136,133,255,0.18)]"
-              />
-              <Button type="button" variant="primary">
-                Join
-              </Button>
-            </div>
+            <FooterNewsletterForm />
           </div>
         </div>
 
