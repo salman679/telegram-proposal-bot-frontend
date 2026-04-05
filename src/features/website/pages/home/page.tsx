@@ -307,7 +307,12 @@ export function HomePage() {
             আপডেট এবং practical bidding tip মিস করবেন না।
           </p>
         </div>
-        <Button href={TELEGRAM_BOT_URL} external variant="inverted">
+        <Button
+          href={TELEGRAM_BOT_URL}
+          external
+          variant="inverted"
+          className="!text-[var(--primary)] visited:!text-[var(--primary)] hover:!text-[var(--primary)] focus:!text-[var(--primary)]"
+        >
           Open Telegram Bot
         </Button>
       </section>
