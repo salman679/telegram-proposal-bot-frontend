@@ -59,7 +59,7 @@ export function Header({ activePage, benefitsHref }: HeaderProps) {
           external
           variant="primary"
           size="sm"
-          className="px-[24px] max-[780px]:min-h-[40px] max-[780px]:px-[16px] max-[780px]:text-[0.84rem]"
+          className="px-[24px] !text-white visited:!text-white hover:!text-white focus:!text-white max-[780px]:min-h-[40px] max-[780px]:px-[16px] max-[780px]:text-[0.84rem]"
         >
           Get Started
         </Button>
