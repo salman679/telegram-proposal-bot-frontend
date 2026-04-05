@@ -175,7 +175,7 @@ export function PricingPage() {
               external
               variant={plan.featured ? "primary" : "secondary"}
             >
-              {plan.cta}
+              <span className={plan.featured ? "!text-white" : undefined}>{plan.cta}</span>
             </Button>
           </article>
         ))}

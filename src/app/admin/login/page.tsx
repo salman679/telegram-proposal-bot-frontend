@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { LockKeyhole, ShieldCheck } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 
-import {
-  ADMIN_EMAIL,
-  ADMIN_PASSWORD,
-  sanitizeAdminRedirect
-} from "@/features/admin/lib/auth";
+import { sanitizeAdminRedirect } from "@/features/admin/lib/auth";
 import { Button } from "@/features/website/components/button";
 import { buildPageMetadata } from "@/features/website/lib/seo";
 
@@ -45,41 +40,8 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
           background: "radial-gradient(circle, rgba(74, 64, 224, 0.1), transparent 68%)"
         }}
       />
-      <section className="relative z-[1] grid w-full max-w-[1120px] gap-6 rounded-[36px] bg-[rgba(255,255,255,0.8)] p-6 shadow-[var(--shadow-soft)] backdrop-blur-[24px] lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-[28px] [background:linear-gradient(160deg,rgba(74,64,224,0.06),rgba(112,42,225,0.02)),var(--surface-low)] p-8 max-[640px]:p-6">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[rgba(74,64,224,0.08)] px-3 py-2 text-[0.92rem] text-[var(--primary)]">
-            <ShieldCheck size={16} />
-            Protected analytics access
-          </div>
-          <h1 className="mb-4 text-[clamp(2rem,4vw,3.6rem)] leading-[1.05]">
-            স্টিচ-অনুপ্রাণিত admin access
-          </h1>
-          <p className="text-base leading-[1.8] text-[var(--muted)]">
-            `/admin` route টি হালকা glass surface, tonal layering আর Bangla-first
-            analytics layout দিয়ে তৈরি। ড্যাশবোর্ডে ঢুকতে নিচের hardcoded
-            credentials ব্যবহার করুন।
-          </p>
 
-          <div className="mt-7 grid gap-[14px] md:grid-cols-2 max-[640px]:grid-cols-1">
-            <div className="rounded-[18px] bg-[var(--surface-ink)] p-[18px]">
-              <span className="mb-1.5 block text-[0.84rem] text-[var(--muted)]">
-                Email
-              </span>
-              <strong>{ADMIN_EMAIL}</strong>
-            </div>
-            <div className="rounded-[18px] bg-[var(--surface-ink)] p-[18px]">
-              <span className="mb-1.5 block text-[0.84rem] text-[var(--muted)]">
-                Password
-              </span>
-              <strong>{ADMIN_PASSWORD}</strong>
-            </div>
-          </div>
-
-          <Link href="/" className="mt-7 inline-flex font-bold text-[var(--primary)]">
-            মার্কেটিং সাইটে ফিরে যান
-          </Link>
-        </div>
-
+      <section className="relative z-[1] w-full max-w-[560px] rounded-[36px] bg-[rgba(255,255,255,0.8)] p-6 shadow-[var(--shadow-soft)] backdrop-blur-[24px]">
         <form
           action="/api/admin/login"
           method="post"
@@ -98,7 +60,6 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
               className="w-full rounded-2xl border border-transparent bg-[var(--surface-highest)] px-4 py-[15px] text-[var(--ink)] outline-none focus:border-[rgba(74,64,224,0.4)] focus:shadow-[0_0_0_6px_rgba(136,133,255,0.18)]"
               type="email"
               name="email"
-              defaultValue={ADMIN_EMAIL}
               autoComplete="username"
               required
             />
@@ -110,7 +71,6 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
               className="w-full rounded-2xl border border-transparent bg-[var(--surface-highest)] px-4 py-[15px] text-[var(--ink)] outline-none focus:border-[rgba(74,64,224,0.4)] focus:shadow-[0_0_0_6px_rgba(136,133,255,0.18)]"
               type="password"
               name="password"
-              defaultValue={ADMIN_PASSWORD}
               autoComplete="current-password"
               required
             />
@@ -118,7 +78,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
 
           {error ? (
             <p className="text-[0.94rem] text-[var(--danger)]">
-              Email অথবা password মেলেনি। hardcoded credentials ব্যবহার করুন।
+              Email or password did not match. Use the configured admin credentials.
             </p>
           ) : null}
 
