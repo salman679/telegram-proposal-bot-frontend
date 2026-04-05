@@ -6,9 +6,9 @@ import { absoluteUrl, buildPageMetadata } from "@/features/website/lib/seo";
 import { HomePage } from "@/features/website/pages/home/page";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Upwork Bot BD | AI Proposal Generator for Bangladeshi Freelancers",
+  title: "ProposalPro | AI Proposal Generator for Bangladeshi Freelancers",
   description:
-    "Generate stronger Upwork proposals in Bangla-first workflows, learn winning bidding tactics, and move faster with the Upwork Bot BD Telegram assistant.",
+    "Generate stronger Upwork proposals in Bangla-first workflows, learn winning bidding tactics, and move faster with the ProposalPro Telegram assistant.",
   path: "/",
   keywords: [
     "Upwork proposal generator Bangladesh",
@@ -29,7 +29,7 @@ export default function HomeRoutePage() {
             name: SITE_NAME,
             url: absoluteUrl("/"),
             description:
-              "Bangla-first landing page for Upwork Bot BD, an AI-assisted Upwork proposal generator for freelancers in Bangladesh.",
+              "Bangla-first landing page for ProposalPro, an AI-assisted Upwork proposal generator for freelancers in Bangladesh.",
             inLanguage: "bn-BD"
           },
           {

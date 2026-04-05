@@ -6,12 +6,12 @@ import { absoluteUrl, buildPageMetadata } from "@/features/website/lib/seo";
 import { HowItWorksPage } from "@/features/website/pages/how-it-works/page";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "কিভাবে কাজ করে - Upwork Bot BD",
+  title: "কিভাবে কাজ করে - ProposalPro",
   description:
-    "Learn how Upwork Bot BD works step by step, from job description input to AI proposal generation and better Upwork bidding outcomes.",
+    "Learn how ProposalPro works step by step, from job description input to AI proposal generation and better Upwork bidding outcomes.",
   path: "/how-it-works",
   keywords: [
-    "how Upwork Bot BD works",
+    "how ProposalPro works",
     "AI proposal workflow",
     "Upwork bidding tutorial Bangladesh"
   ]
@@ -28,13 +28,13 @@ export default function HowItWorksRoutePage() {
             name: `How It Works - ${SITE_NAME}`,
             url: absoluteUrl("/how-it-works"),
             description:
-              "Step-by-step explanation of how Upwork Bot BD helps freelancers create better proposals.",
+              "Step-by-step explanation of how ProposalPro helps freelancers create better proposals.",
             inLanguage: "bn-BD"
           },
           {
             "@context": "https://schema.org",
             "@type": "HowTo",
-            name: "How to use Upwork Bot BD",
+            name: "How to use ProposalPro",
             description:
               "Paste a job description, get an AI proposal, and submit faster on Upwork.",
             totalTime: "PT5M",

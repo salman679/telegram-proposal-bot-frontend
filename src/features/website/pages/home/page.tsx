@@ -205,7 +205,7 @@ export function HomePage() {
                 <Bot size={22} />
               </div>
               <div className="grid gap-0.5">
-                <strong>Upwork Proposal Bot BD</strong>
+                <strong>ProposalPro</strong>
                 <span className="text-[0.82rem] opacity-85">bot is typing...</span>
               </div>
             </div>
@@ -442,7 +442,7 @@ export function HomePage() {
         <div className="grid gap-[30px] lg:grid-cols-[1.1fr_0.7fr_0.7fr_1fr]">
           <div className="grid gap-3">
             <div className="text-[1.55rem] font-extrabold tracking-[-0.04em] bg-[linear-gradient(135deg,var(--primary),var(--secondary))] bg-clip-text text-transparent">
-              Upwork Proposal Bot BD
+              ProposalPro
             </div>
             <p className="leading-[1.8] text-[var(--muted)]">
               বাংলাদেশী ফ্রিল্যান্সারদের ক্ষমতায়নের লক্ষ্যে তৈরি একটি আধুনিক AI সলিউশন।
@@ -505,7 +505,7 @@ export function HomePage() {
         </div>
 
         <div className="mt-14 text-center text-[0.86rem] text-[var(--muted)]">
-          © 2026 Upwork Proposal Bot BD. All rights reserved.
+          © 2026 ProposalPro. All rights reserved.
         </div>
       </footer>
     </main>

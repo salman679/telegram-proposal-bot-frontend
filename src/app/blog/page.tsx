@@ -7,9 +7,9 @@ import { getBlogArticles } from "@/features/website/pages/blog/data";
 import { BlogPage } from "@/features/website/pages/blog/page";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Blog & Resources - Upwork Bot BD",
+  title: "Blog & Resources - ProposalPro",
   description:
-    "Read Bangla-first Upwork strategy guides, AI proposal tips, tutorials, and freelancer success stories from Upwork Bot BD.",
+    "Read Bangla-first Upwork strategy guides, AI proposal tips, tutorials, and freelancer success stories from ProposalPro.",
   path: "/blog",
   keywords: [
     "Upwork blog Bangladesh",

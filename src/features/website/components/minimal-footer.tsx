@@ -16,7 +16,7 @@ export function MinimalFooter({ links }: MinimalFooterProps) {
   return (
     <footer className={`mt-[72px] pt-6 ${SITE_CONTAINER_CLASS}`}>
       <div className="flex items-center justify-between gap-[18px] text-[0.92rem] text-[var(--muted)] max-[780px]:flex-col max-[780px]:items-start">
-        <div>© 2026 Upwork Bot BD. All rights reserved.</div>
+        <div>© 2026 ProposalPro. All rights reserved.</div>
         <div className="flex flex-wrap items-center justify-end gap-4 max-[780px]:justify-start">
           {links.map((link) =>
             link.external ? (

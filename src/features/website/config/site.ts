@@ -1,4 +1,4 @@
-export const SITE_NAME = "Upwork Bot BD";
+export const SITE_NAME = "ProposalPro";
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://proposalpro.salmanizhar.com"
 ).replace(/\/$/, "");

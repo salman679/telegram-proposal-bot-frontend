@@ -30,7 +30,7 @@ export async function generateMetadata({
   if (!article) {
     return buildPageMetadata({
       title: `Blog - ${SITE_NAME}`,
-      description: "Freelancing resources and Upwork strategy articles from Upwork Bot BD.",
+      description: "Freelancing resources and Upwork strategy articles from ProposalPro.",
       path: "/blog",
       noIndex: true
     });

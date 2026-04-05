@@ -6,7 +6,7 @@ import { buildPageMetadata } from "@/features/website/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = buildPageMetadata({
-  title: "Admin Dashboard - Upwork Bot BD",
+  title: "Admin Dashboard - ProposalPro",
   description: "Private analytics dashboard for site administrators.",
   path: "/admin",
   noIndex: true

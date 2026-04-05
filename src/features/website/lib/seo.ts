@@ -7,13 +7,13 @@ import {
 } from "@/features/website/config/site";
 
 export const SITE_DESCRIPTION =
-  "Upwork Bot BD helps Bangladeshi freelancers generate stronger AI-assisted Upwork proposals, learn winning bidding strategies, and move faster with a Bangla-first workflow.";
+  "ProposalPro helps Bangladeshi freelancers generate stronger AI-assisted Upwork proposals, learn winning bidding strategies, and move faster with a Bangla-first workflow.";
 
 export const DEFAULT_OG_IMAGE =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuA-qmToywF159ILJP2uiy4EYVVXyYMmzUqHXZwSM54cItw40ZS37xo3kFtheBIpflTOOemuV9cU9Gokxd837bb3xOsqxGmoJ0qmbVaJwxman_ml17Djv79eI4C3AMpXRCT2NcU7lyrRc6kIepLPG8loH-W9fyhirVJrHunhMR-MbJTMnC9LOc4rawui7h8UGlhlKsD1DYkK4EN1sJEYOmnrlvYcxn79RrnVlyehnkJvwQmhBS_A_Zzk9HIAR6DrkabCDP5jX41Hnes";
 
 const DEFAULT_KEYWORDS = [
-  "Upwork Bot BD",
+  "ProposalPro",
   "Upwork proposal generator",
   "AI proposal generator",
   "Bangla freelancer tool",

@@ -30,7 +30,7 @@ export function Footer() {
             {SITE_NAME}
           </div>
           <p className="leading-[1.8] text-[var(--muted)]">
-            © 2026 Upwork Bot BD. All rights reserved.
+            © 2026 ProposalPro. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <Button

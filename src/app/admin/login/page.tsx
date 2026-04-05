@@ -20,8 +20,8 @@ interface LoginPageProps {
 }
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Admin Login - Upwork Bot BD",
-  description: "Private admin login for the Upwork Bot BD dashboard.",
+  title: "Admin Login - ProposalPro",
+  description: "Private admin login for the ProposalPro dashboard.",
   path: "/admin/login",
   noIndex: true
 });

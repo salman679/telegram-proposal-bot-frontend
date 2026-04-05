@@ -6,12 +6,12 @@ import { absoluteUrl, buildPageMetadata } from "@/features/website/lib/seo";
 import { PricingPage } from "@/features/website/pages/pricing/page";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Pricing - Upwork Bot BD",
+  title: "Pricing - ProposalPro",
   description:
-    "See weekly, monthly, and lifetime pricing for Upwork Bot BD and choose the plan that fits your freelance proposal workflow.",
+    "See weekly, monthly, and lifetime pricing for ProposalPro and choose the plan that fits your freelance proposal workflow.",
   path: "/pricing",
   keywords: [
-    "Upwork Bot BD pricing",
+    "ProposalPro pricing",
     "AI proposal generator pricing",
     "Bangladesh freelancer tool pricing"
   ]
@@ -28,7 +28,7 @@ export default function PricingRoutePage() {
             name: `Pricing - ${SITE_NAME}`,
             url: absoluteUrl("/pricing"),
             description:
-              "Pricing plans for Upwork Bot BD and the Telegram proposal assistant.",
+              "Pricing plans for ProposalPro and the Telegram proposal assistant.",
             inLanguage: "bn-BD"
           },
           {

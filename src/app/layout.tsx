@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     shortcut: "/icon.svg"
   },
   keywords: [
-    "Upwork Bot BD",
+    "ProposalPro",
     "AI proposal generator",
     "Upwork proposal generator",
     "Bangla freelancer tool",
