@@ -104,15 +104,13 @@ export function BlogArticleActions({
     writeStoredSlugs(LIKED_KEY, nextValues);
   }
 
-  const railClass =
-    "rounded-[30px] border border-[rgba(255,255,255,0.72)] bg-[rgba(255,255,255,0.74)] p-3 shadow-[0_22px_44px_rgba(74,64,224,0.1)] backdrop-blur-[20px]";
   const actionButtonClass =
     "h-14 w-14 min-h-0 rounded-[20px] border border-[rgba(74,64,224,0.08)] bg-[rgba(255,255,255,0.96)] px-0 py-0 shadow-[0_14px_28px_rgba(74,64,224,0.08)] hover:-translate-y-1 hover:shadow-[0_20px_36px_rgba(74,64,224,0.14)]";
   const activeActionButtonClass =
     "border-transparent bg-[linear-gradient(135deg,#4a40e0_0%,#9795ff_100%)] text-white shadow-[0_18px_34px_rgba(74,64,224,0.2)]";
 
   return (
-    <div className={`flex flex-col items-center gap-3 ${railClass}`}>
+    <div className="flex flex-col items-center gap-3">
       <Button
         type="button"
         variant="inverted"
