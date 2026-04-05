@@ -165,7 +165,7 @@ export function HomePage() {
 
           <div className="mt-7 flex flex-wrap items-center gap-4">
             <Button href={TELEGRAM_BOT_URL} external variant="primary">
-              Telegram-এ শুরু করুন
+              <span className="!text-white">Telegram-এ শুরু করুন</span>
               <Rocket size={18} />
             </Button>
             <Button href="/how-it-works" variant="secondary">
@@ -368,7 +368,7 @@ export function HomePage() {
                 external
                 variant={plan.featured ? "primary" : "secondary"}
               >
-                {plan.cta}
+                {plan.featured ? <span className="!text-white">{plan.cta}</span> : plan.cta}
               </Button>
             </article>
           ))}
